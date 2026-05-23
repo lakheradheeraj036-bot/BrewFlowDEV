@@ -4,10 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\Login;
 
 use App\Livewire\SuperAdmin\Dashboard\DashboardPage;
-use App\Livewire\SuperAdmin\Businesses\BusinessCreation;
 use App\Livewire\SuperAdmin\Staff\StaffManagement;
 use App\Http\Controllers\SuperAdmin\BusinessController;
-use App\Http\Controllers\SuperAdmin\BusinessCreationController;
 use App\Http\Controllers\SuperAdmin\RolesPermissionsController;
 use App\Http\Controllers\SuperAdmin\SettingsController;
 
@@ -39,15 +37,19 @@ Route::prefix("super-admin")
             Route::get("/dashboard", DashboardPage::class)->name("dashboard");
 
             Route::get('/businesses', [BusinessController::class, 'index'])->name('businesses.index');
-            Route::get('/businesses/create', BusinessCreation::class)->name('businesses.create');
-            Route::post('/businesses', [BusinessCreationController::class, 'store'])->name('businesses.store');
+            Route::get('/businesses/create', [BusinessController::class, 'create'])->name('businesses.create');
+            Route::post('/businesses', [BusinessController::class, 'store'])->name('businesses.store');
             Route::get('/businesses/{business}/edit', [BusinessController::class, 'edit'])->name('businesses.edit');
             Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
             Route::post('/businesses/bulk-status', [BusinessController::class, 'bulkUpdateStatus'])->name('businesses.bulk-status');
             Route::delete('/businesses/delete', [BusinessController::class, 'destroy'])->name('businesses.destroy');
             Route::get("/staff", StaffManagement::class)->name("staff.index");
+
+            // Roles
             Route::get("/roles", [RolesPermissionsController::class, 'index'])->name("roles.index");
             Route::post("/roles/toggle-permission", [RolesPermissionsController::class, 'togglePermission'])->name("roles.toggle-permission");
+
+            
             Route::get('/settings',          [SettingsController::class, 'index'])->name('settings.index');
             Route::post('/settings/general',  [SettingsController::class, 'saveGeneral'])->name('settings.general');
             Route::post('/settings/features', [SettingsController::class, 'saveFeatures'])->name('settings.features');

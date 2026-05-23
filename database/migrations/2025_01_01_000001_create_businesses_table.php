@@ -27,7 +27,6 @@ return new class extends Migration
             $table->string('subscription_plan')->default('free');
             $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

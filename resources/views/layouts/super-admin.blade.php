@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>{{ $title ?? 'Dashboard' }} | BrewFlow Admin</title>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 
 <body class="h-full bg-slate-50 antialiased" x-data="{ sidebarOpen: true, sidebarMobileOpen: false }">
-    {{-- Toast Notifications --}}
-    <x-ui.toast-container />
-
     <div class="flex h-full">
         {{-- Sidebar --}}
         <x-super-admin.sidebar />
@@ -45,7 +43,7 @@
         </div>
     </div>
     @livewireScripts
-    @stack('scripts')
+    {{-- @stack('scripts') --}}
 </body>
 
 </html>

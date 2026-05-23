@@ -1,4 +1,4 @@
-<div>
+<x-layouts.super-admin title="Add Business">
     <x-super-admin.breadcrumb :items="[
         ['label' => 'Businesses', 'url' => route('super-admin.businesses.index')],
         ['label' => 'Add Business'],
@@ -58,6 +58,7 @@
                                 @blur="validate('name')"
                                 placeholder="e.g. The Daily Grind Cafe"
                                 maxlength="100"
+                                value="{{ old('name') }}"
                                 class="w-full px-3 py-2.5 text-sm border rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:border-amber-400 focus:ring-amber-200 transition-all"
                                 :class="(errors.name || '{{ $errors->first('name') }}') ? 'border-red-400' : 'border-slate-300'"
                             >
@@ -117,6 +118,7 @@
                                 @blur="validate('email')"
                                 placeholder="business@example.com"
                                 maxlength="150"
+                                value="{{ old('email') }}"
                                 class="w-full px-3 py-2.5 text-sm border rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:border-amber-400 focus:ring-amber-200 transition-all"
                                 :class="(errors.email || '{{ $errors->first('email') }}') ? 'border-red-400' : 'border-slate-300'"
                             >
@@ -135,6 +137,7 @@
                                 @blur="validate('phone')"
                                 placeholder="+61 4XX XXX XXX"
                                 maxlength="20"
+                                value="{{ old('phone') }}"
                                 class="w-full px-3 py-2.5 text-sm border rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:border-amber-400 focus:ring-amber-200 transition-all"
                                 :class="(errors.phone || '{{ $errors->first('phone') }}') ? 'border-red-400' : 'border-slate-300'"
                             >
@@ -248,7 +251,7 @@
                         </svg>
                         <span x-text="submitting ? 'Creating...' : 'Create Business'"></span>
                     </button>
-                    <x-ui.button href="{{ route('super-admin.businesses.index') }}" variant="outline" class="w-full justify-center" wire:navigate>
+                    <x-ui.button href="{{ route('super-admin.businesses.index') }}" variant="outline" class="w-full justify-center">
                         Cancel
                     </x-ui.button>
                 </div>
@@ -256,4 +259,4 @@
             </div>
         </div>
     </form>
-</div>
+</x-layouts.super-admin>

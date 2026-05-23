@@ -1,7 +1,5 @@
 <x-layouts.super-admin title="Businesses">
     <div id="businessesApp" class="pb-32">
-        <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"></div>
-
         {{-- Breadcrumb --}}
         <x-super-admin.breadcrumb :items="[['label' => 'Businesses', 'url' => route('super-admin.businesses.index')]]" />
 
@@ -25,7 +23,7 @@
             {{-- Filters section --}}
             <div class="px-6 py-4 border-b border-slate-100 bg-gradient-to-b from-slate-50/80 to-white">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div class="relative flex-1 max-w-xl">
+                    <div class="relative flex-1 max-w-md">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -91,7 +89,14 @@
                         <tr class="bg-slate-50 border-b border-slate-200">
                             <th class="text-left py-4 px-6 w-12">
                                 <div class="flex items-center justify-center">
-                                    <input id="selectAllCheckbox" type="checkbox" class="w-5 h-5 rounded-lg border-2 border-slate-300 bg-white shadow-sm cursor-pointer transition-all duration-200 accent-amber-500 checked:bg-amber-500 checked:border-amber-500 hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-0" />
+                                    <label class="relative flex items-center justify-center cursor-pointer">
+                                        <input id="selectAllCheckbox" type="checkbox" class="peer sr-only" />
+                                        <div class="relative w-5 h-5 rounded-lg border-2 border-slate-300 bg-white shadow-sm transition-all duration-200 peer-checked:bg-amber-500 peer-checked:border-amber-500 hover:border-amber-400 peer-hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-0">
+                                            <svg class="w-3 h-3 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                    </label>
                                 </div>
                             </th>
                             <th class="text-left py-4 px-6 text-xs font-semibold text-slate-600 uppercase tracking-wide">Business</th>
@@ -108,10 +113,17 @@
                         <tr class="hover:bg-slate-50/70 transition-all duration-200">
                             <td class="py-4 px-6">
                                 <div class="flex items-center justify-center">
-                                    <input
-                                        type="checkbox"
-                                        data-business-id="{{ $business->id }}"
-                                        class="business-checkbox w-5 h-5 rounded-lg border-2 border-slate-300 bg-white shadow-sm cursor-pointer transition-all duration-200 accent-amber-500 checked:bg-amber-500 checked:border-amber-500 hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-0" />
+                                    <label class="relative flex items-center justify-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            data-business-id="{{ $business->id }}"
+                                            class="business-checkbox peer sr-only" />
+                                        <div class="relative w-5 h-5 rounded-lg border-2 border-slate-300 bg-white shadow-sm transition-all duration-200 peer-checked:bg-amber-500 peer-checked:border-amber-500 hover:border-amber-400 peer-hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-0">
+                                            <svg class="w-3 h-3 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                    </label>
                                 </div>
                             </td>
                             <td class="py-5 px-6">
@@ -252,48 +264,47 @@
         </div>
 
         {{-- Floating bulk action toolbar --}}
-        <div id="bulkActionBar" class="hidden fixed bottom-6 left-1/4 z-40 w-[min(96%,45rem)] -translate-x-1/2 transform rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl transition-transform duration-300">
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-3 rounded-xl bg-amber-50 px-4 py-2 border border-amber-200">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div id="bulkActionBar" class="hidden fixed bottom-6 left-1/2 z-40 w-[min(96%,45rem)] -translate-x-1/2 transform rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl transition-transform duration-300">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3 flex-shrink-0">
+                    <div class="flex items-center gap-2.5 rounded-xl bg-amber-50 px-3.5 py-2 border border-amber-200">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-600 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                             </svg>
                         </div>
-                        <div>
+                        <div class="min-w-0">
                             <p class="text-sm font-semibold text-slate-800"><span id="selectedCountText">0</span> selected</p>
-                            <p class="text-xs text-slate-500">Use bulk actions on selected businesses.</p>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center gap-2.5 flex-shrink-0">
                     <div class="relative">
-                        <select id="bulkStatusSelect" class="appearance-none px-4 py-2.5 pr-10 text-sm font-medium border border-slate-200 rounded-lg bg-white text-slate-700 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all" disabled>
+                        <select id="bulkStatusSelect" class="appearance-none px-3 py-2 pr-9 text-sm font-medium border border-slate-200 rounded-lg bg-white text-slate-700 hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all min-w-[160px]" disabled>
                             <option value="">Change Status...</option>
                             <option value="active">Mark as Active</option>
                             <option value="pending">Mark as Pending</option>
                             <option value="inactive">Mark as Inactive</option>
                             <option value="suspended">Mark as Suspended</option>
                         </select>
-                        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                         </svg>
                         <div id="bulkStatusSpinner" class="absolute right-3 top-1/2 hidden -translate-y-1/2 text-amber-500">
-                            <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
                         </div>
                     </div>
-                    <button id="bulkDeleteButton" type="button" class="inline-flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-red-400" disabled>
-                        <svg id="bulkDeleteSpinner" class="hidden h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button id="bulkDeleteButton" type="button" class="inline-flex items-center gap-2 rounded-lg bg-red-500 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-600 disabled:cursor-not-allowed disabled:bg-red-400 whitespace-nowrap" disabled>
+                        <svg id="bulkDeleteSpinner" class="hidden h-3.5 w-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Delete Selected
+                        Delete
                     </button>
-                    <button id="clearSelectionButton" type="button" class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-3 text-slate-600 shadow-sm transition hover:bg-slate-50">
+                    <button id="clearSelectionButton" type="button" class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white p-2 text-slate-600 shadow-sm transition hover:bg-slate-50 flex-shrink-0">
                         <span class="sr-only">Clear selected items</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -348,7 +359,6 @@
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
             const app = document.getElementById('businessesApp');
-            const toastContainer = document.getElementById('toastContainer');
             const searchInput = document.getElementById('businessSearch');
             const statusFilter = document.getElementById('statusFilter');
             const typeFilter = document.getElementById('typeFilter');
@@ -377,60 +387,14 @@
                 };
             };
 
-            const showToast = (message, type = 'success') => {
-                const toast = document.createElement('div');
-                toast.className = 'pointer-events-auto overflow-hidden rounded-xl border shadow-lg transition duration-300 transform opacity-0 translate-x-3';
-                toast.innerHTML = `
-                    <div class="flex items-start gap-3 p-4 ${type === 'success' ? 'bg-emerald-50 border-emerald-200' : type === 'error' ? 'bg-red-50 border-red-200' : type === 'warning' ? 'bg-amber-50 border-amber-200' : 'bg-blue-50 border-blue-200'}">
-                        <div class="flex-shrink-0 mt-0.5">
-                            ${type === 'success' ? '<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' : type === 'error' ? '<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' : type === 'warning' ? '<svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' : '<svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'}
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium ${type === 'success' ? 'text-emerald-800' : type === 'error' ? 'text-red-800' : type === 'warning' ? 'text-amber-800' : 'text-blue-800'}">${message}</p>
-                        </div>
-                        <button type="button" class="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0" aria-label="Close notification">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-                `;
-
-                const progress = document.createElement('div');
-                progress.className = `${type === 'success' ? 'bg-emerald-200' : type === 'error' ? 'bg-red-200' : type === 'warning' ? 'bg-amber-200' : 'bg-blue-200'} h-1 w-full`;
-                toast.appendChild(progress);
-                toastContainer.appendChild(toast);
-
-                requestAnimationFrame(() => {
-                    toast.classList.remove('opacity-0', 'translate-x-3');
-                });
-
-                let width = 100;
-                const timer = setInterval(() => {
-                    width -= 1;
-                    progress.style.width = width + '%';
-                    if (width <= 0) {
-                        clearInterval(timer);
-                        hideToast();
-                    }
-                }, 40);
-
-                const hideToast = () => {
-                    toast.classList.add('opacity-0', 'translate-x-3');
-                    setTimeout(() => toast.remove(), 200);
-                };
-
-                toast.querySelector('button').addEventListener('click', () => {
-                    clearInterval(timer);
-                    hideToast();
-                });
-            };
-
             const toggleOverlay = (show) => {
                 tableOverlay.classList.toggle('hidden', !show);
             };
 
             const resetSelection = () => {
                 state.selectedIds.clear();
-                document.querySelectorAll('.business-checkbox').forEach((checkbox) => {
+                const checkboxes = document.querySelectorAll('.business-checkbox');
+                checkboxes.forEach((checkbox) => {
                     checkbox.checked = false;
                 });
                 selectAllCheckbox.checked = false;
@@ -438,6 +402,7 @@
                 bulkActionBar.classList.add('hidden');
                 bulkStatusSelect.disabled = true;
                 bulkDeleteButton.disabled = true;
+                bulkStatusSelect.value = '';
             };
 
             const updateSelectionUI = () => {
@@ -451,41 +416,69 @@
 
             const bindRowCheckboxes = () => {
                 document.querySelectorAll('.business-checkbox').forEach((checkbox) => {
-                    checkbox.addEventListener('change', function() {
-                        const id = this.dataset.businessId;
-                        if (this.checked) {
-                            state.selectedIds.add(id);
-                        } else {
-                            state.selectedIds.delete(id);
-                            selectAllCheckbox.checked = false;
-                        }
-                        updateSelectionUI();
-                    });
+                    checkbox.removeEventListener('change', handleRowCheckboxChange);
+                    checkbox.addEventListener('change', handleRowCheckboxChange);
                 });
+            };
+
+            const handleRowCheckboxChange = function() {
+                const id = this.dataset.businessId;
+                if (this.checked) {
+                    state.selectedIds.add(id);
+                } else {
+                    state.selectedIds.delete(id);
+                    selectAllCheckbox.checked = false;
+                }
+                updateSelectionUI();
+            };
+
+            const bindSelectAllCheckbox = () => {
+                selectAllCheckbox.removeEventListener('change', handleSelectAllChange);
+                selectAllCheckbox.addEventListener('change', handleSelectAllChange);
+            };
+
+            const handleSelectAllChange = function() {
+                const checked = this.checked;
+                document.querySelectorAll('.business-checkbox').forEach((checkbox) => {
+                    checkbox.checked = checked;
+                    const id = checkbox.dataset.businessId;
+                    if (checked) {
+                        state.selectedIds.add(id);
+                    } else {
+                        state.selectedIds.delete(id);
+                    }
+                });
+                updateSelectionUI();
             };
 
             const bindDeleteButtons = () => {
                 document.querySelectorAll('.delete-business-button').forEach((button) => {
-                    button.addEventListener('click', function() {
-                        state.activeDeleteId = this.dataset.deleteId;
-                        state.activeDeleteName = this.dataset.deleteName || 'this business';
-                        state.isDeleteLoading = false;
-                        deleteSpinner.classList.add('hidden');
-                        confirmDeleteText.textContent = 'Delete';
-                        deleteModalMessage.textContent = `Are you sure you want to delete ${state.activeDeleteName}? This action cannot be undone.`;
-                        deleteModal.classList.remove('hidden');
-                    });
+                    button.removeEventListener('click', handleDeleteButtonClick);
+                    button.addEventListener('click', handleDeleteButtonClick);
                 });
+            };
+
+            const handleDeleteButtonClick = function() {
+                state.activeDeleteId = this.dataset.deleteId;
+                state.activeDeleteName = this.dataset.deleteName || 'this business';
+                state.isDeleteLoading = false;
+                deleteSpinner.classList.add('hidden');
+                confirmDeleteText.textContent = 'Delete';
+                deleteModalMessage.textContent = `Are you sure you want to delete ${state.activeDeleteName}? This action cannot be undone.`;
+                deleteModal.classList.remove('hidden');
             };
 
             const bindPaginationLinks = () => {
                 const links = tableWrapper.querySelectorAll('#paginationContainer a');
                 links.forEach((link) => {
-                    link.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        loadPageFromUrl(this.href);
-                    });
+                    link.removeEventListener('click', handlePaginationLinkClick);
+                    link.addEventListener('click', handlePaginationLinkClick);
                 });
+            };
+
+            const handlePaginationLinkClick = function(event) {
+                event.preventDefault();
+                loadPageFromUrl(this.href);
             };
 
             const refreshTableContent = (html) => {
@@ -493,14 +486,16 @@
                 const doc = parser.parseFromString(html, 'text/html');
                 const newWrapper = doc.getElementById('businessTableWrapper');
                 if (!newWrapper) {
-                    showToast('Unable to refresh table content.', 'error');
+                    console.error('Unable to refresh table content.');
                     return;
                 }
                 tableWrapper.innerHTML = newWrapper.innerHTML;
                 resetSelection();
                 bindRowCheckboxes();
+                bindSelectAllCheckbox();
                 bindDeleteButtons();
                 bindPaginationLinks();
+                updateSelectionUI();
             };
 
             const getQueryParameters = () => {
@@ -539,7 +534,6 @@
                     })
                     .catch((error) => {
                         console.error(error);
-                        showToast('Unable to load businesses. Please try again.', 'error');
                     })
                     .finally(() => {
                         state.isSearchLoading = false;
@@ -563,7 +557,7 @@
             const sendBulkStatusRequest = () => {
                 const status = bulkStatusSelect.value;
                 if (!status || state.selectedIds.size === 0) {
-                    showToast('Select at least one business before changing status.', 'warning');
+                    console.warn('Select at least one business before changing status.');
                     bulkStatusSelect.value = '';
                     return;
                 }
@@ -580,23 +574,19 @@
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.success) {
-                            showToast(data.message || 'Status updated successfully.', 'success');
                             bulkStatusSelect.value = '';
                             loadPageFromUrl(`${pageUrl}?${getQueryParameters().toString()}`);
-                        } else {
-                            showToast(data.message || 'Unable to update status.', 'error');
                         }
                     })
                     .catch((error) => {
                         console.error(error);
-                        showToast('Unable to update status. Please try again.', 'error');
                     })
                     .finally(() => showBulkStatusProcessing(false));
             };
 
             const sendDeleteRequest = (isBulk) => {
                 if (isBulk && state.selectedIds.size === 0) {
-                    showToast('Select businesses before deleting.', 'warning');
+                    console.warn('Select businesses before deleting.');
                     return;
                 }
                 showDeleteProcessing(true);
@@ -616,33 +606,15 @@
                     .then((response) => response.json())
                     .then((data) => {
                         if (data.success) {
-                            showToast(data.message || 'Business deleted successfully.', 'success');
                             deleteModal.classList.add('hidden');
                             loadPageFromUrl(`${pageUrl}?${getQueryParameters().toString()}`);
-                        } else {
-                            showToast(data.message || 'Unable to delete business.', 'error');
                         }
                     })
                     .catch((error) => {
                         console.error(error);
-                        showToast('Unable to delete business. Please try again.', 'error');
                     })
                     .finally(() => showDeleteProcessing(false));
             };
-
-            selectAllCheckbox.addEventListener('change', function() {
-                const checked = this.checked;
-                document.querySelectorAll('.business-checkbox').forEach((checkbox) => {
-                    checkbox.checked = checked;
-                    const id = checkbox.dataset.businessId;
-                    if (checked) {
-                        state.selectedIds.add(id);
-                    } else {
-                        state.selectedIds.delete(id);
-                    }
-                });
-                updateSelectionUI();
-            });
 
             searchInput.addEventListener('input', debounce(() => {
                 fetchAndUpdateTable(getQueryParameters());
@@ -662,7 +634,7 @@
             bulkStatusSelect.addEventListener('change', sendBulkStatusRequest);
             bulkDeleteButton.addEventListener('click', function() {
                 if (state.selectedIds.size === 0) {
-                    showToast('Select at least one business to delete.', 'warning');
+                    console.warn('Select at least one business to delete.');
                     return;
                 }
                 state.activeDeleteId = null;
@@ -678,15 +650,19 @@
                 sendDeleteRequest(state.activeDeleteId === null);
             });
 
-            tableWrapper.addEventListener('click', function(event) {
+            const handleTableWrapperClick = function(event) {
                 const link = event.target.closest('a');
                 if (link && link.closest('.pagination')) {
                     event.preventDefault();
                     loadPageFromUrl(link.href);
                 }
-            });
+            };
+
+            tableWrapper.removeEventListener('click', handleTableWrapperClick);
+            tableWrapper.addEventListener('click', handleTableWrapperClick);
 
             bindRowCheckboxes();
+            bindSelectAllCheckbox();
             bindDeleteButtons();
             bindPaginationLinks();
         });

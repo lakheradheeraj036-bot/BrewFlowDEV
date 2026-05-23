@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SuperAdmin\StoreBusinessRequest;
 use App\Http\Requests\SuperAdmin\UpdateBusinessRequest;
 use App\Models\Business;
 use Illuminate\Http\Request;
@@ -27,92 +28,152 @@ class BusinessController extends Controller
             $sortDir = 'desc';
         }
 
-        $businessQuery = Business::query()
-            ->with('owner')
-            ->when($search, fn($query) => $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('city', 'like', "%{$search}%");
-            }))
-            ->when($status, fn($query) => $query->where('status', $status))
-            ->when($type, fn($query) => $query->where('type', $type));
+        try {
+            $businessQuery = Business::query()
+                ->when($search, fn($query) => $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%");
+                }))
+                ->when($status, fn($query) => $query->where('status', $status))
+                ->when($type, fn($query) => $query->where('type', $type));
 
-        $businesses = $businessQuery
-            ->orderBy($sortBy, $sortDir)
-            ->paginate(10)
-            ->withQueryString();
+            $businesses = $businessQuery
+                ->orderBy($sortBy, $sortDir)
+                ->paginate(10)
+                ->withQueryString();
 
-        $allBusinessIds = Business::query()
-            ->when($search, fn($query) => $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('city', 'like', "%{$search}%");
-            }))
-            ->when($status, fn($query) => $query->where('status', $status))
-            ->when($type, fn($query) => $query->where('type', $type))
-            ->pluck('id')
-            ->map(fn($id) => (string) $id)
-            ->toArray();
+            $allBusinessIds = Business::query()
+                ->when($search, fn($query) => $query->where(function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%");
+                }))
+                ->when($status, fn($query) => $query->where('status', $status))
+                ->when($type, fn($query) => $query->where('type', $type))
+                ->pluck('id')
+                ->map(fn($id) => (string) $id)
+                ->toArray();
 
-        $stats = [
-            'total' => Business::count(),
-            'active' => Business::where('status', 'active')->count(),
-            'pending' => Business::where('status', 'pending')->count(),
-        ];
+            $stats = [
+                'total' => Business::count(),
+                'active' => Business::where('status', 'active')->count(),
+                'pending' => Business::where('status', 'pending')->count(),
+            ];
 
-        return view('super-admin.businesses.index', [
-            'businesses' => $businesses,
-            'stats' => $stats,
-            'allBusinessIds' => $allBusinessIds,
-        ]);
+            return view('super-admin.businesses.index', [
+                'businesses' => $businesses,
+                'stats' => $stats,
+                'allBusinessIds' => $allBusinessIds,
+            ]);
+        } catch (\Exception $e) {
+            return redirect()
+                ->back();
+        }
+    }
+
+    public function create()
+    {
+        return view('super-admin.businesses.create');
+    }
+
+    public function store(StoreBusinessRequest $request)
+    {
+        try {
+            $validated = $request->validated();
+
+            Business::create([
+                'name'              => strip_tags(trim($validated['name'])),
+                'type'              => $validated['type'],
+                'email'             => filled($validated['email']) ? strtolower(trim($validated['email'])) : null,
+                'phone'             => filled($validated['phone']) ? trim($validated['phone']) : null,
+                'address'           => filled($validated['address']) ? strip_tags(trim($validated['address'])) : null,
+                'city'              => filled($validated['city']) ? strip_tags(trim($validated['city'])) : null,
+                'country'           => filled($validated['country']) ? strip_tags(trim($validated['country'])) : null,
+                'subscription_plan' => $validated['subscription_plan'],
+                'status'            => $validated['status'],
+            ]);
+
+            return redirect()
+                ->route('super-admin.businesses.index');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput();
+        }
     }
 
     public function bulkUpdateStatus(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'selected_ids' => ['required', 'array'],
-            'selected_ids.*' => ['integer', 'exists:businesses,id'],
-            'status' => ['required', 'in:active,inactive,pending,suspended'],
-        ]);
+        try {
+            $validated = $request->validate([
+                'selected_ids' => ['required', 'array'],
+                'selected_ids.*' => ['integer', 'exists:businesses,id'],
+                'status' => ['required', 'in:active,inactive,pending,suspended'],
+            ]);
 
-        $count = Business::whereIn('id', $validated['selected_ids'])
-            ->update(['status' => $validated['status']]);
+            if (empty($validated['selected_ids'])) {
+                return response()->json([
+                    'success' => false,
+                ], 400);
+            }
 
-        $message = "{$count} " . str('business')->plural($count) . " updated to {$validated['status']}.";
+            $count = Business::whereIn('id', $validated['selected_ids'])
+                ->update(['status' => $validated['status']]);
 
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-            'count' => $count,
-        ]);
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+            ], 500);
+        }
     }
 
     public function edit(Business $business)
     {
-        return view('super-admin.businesses.edit', [
-            'business' => $business,
-        ]);
+        try {
+            return view('super-admin.businesses.edit', [
+                'business' => $business,
+            ]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()
+                ->route('super-admin.businesses.index');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('super-admin.businesses.index');
+        }
     }
 
     public function update(UpdateBusinessRequest $request, Business $business)
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $business->update([
-            'name' => $validated['name'],
-            'type' => $validated['type'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
-            'city' => $validated['city'],
-            'country' => $validated['country'],
-            'subscription_plan' => $validated['subscription_plan'],
-            'status' => $validated['status'],
-        ]);
+            $business->update([
+                'name'              => strip_tags(trim($validated['name'])),
+                'type'              => $validated['type'],
+                'email'             => filled($validated['email']) ? strtolower(trim($validated['email'])) : null,
+                'phone'             => filled($validated['phone']) ? trim($validated['phone']) : null,
+                'address'           => filled($validated['address']) ? strip_tags(trim($validated['address'])) : null,
+                'city'              => filled($validated['city']) ? strip_tags(trim($validated['city'])) : null,
+                'country'           => filled($validated['country']) ? strip_tags(trim($validated['country'])) : null,
+                'subscription_plan' => $validated['subscription_plan'],
+                'status'            => $validated['status'],
+            ]);
 
-        return redirect()
-            ->route('super-admin.businesses.index')
-            ->with('success', 'Business updated successfully.');
+            return redirect()
+                ->route('super-admin.businesses.index');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()
+                ->route('super-admin.businesses.index');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput();
+        }
     }
 
     public function destroy(Request $request): JsonResponse
@@ -126,11 +187,9 @@ class BusinessController extends Controller
 
             if (!empty($validated['selected_ids'])) {
                 $count = Business::whereIn('id', $validated['selected_ids'])->delete();
-                $message = "{$count} " . str('business')->plural($count) . " deleted successfully.";
 
                 return response()->json([
                     'success' => true,
-                    'message' => $message,
                     'count' => $count,
                 ]);
             }
@@ -140,19 +199,20 @@ class BusinessController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Business deleted successfully.',
                     'count' => 1,
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'No business was selected for deletion.',
             ], 400);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+            ], 404);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting business: ' . $e->getMessage(),
             ], 500);
         }
     }

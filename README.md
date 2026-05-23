@@ -63,9 +63,18 @@ Visit: **http://localhost:8000/super-admin/login**
 ```
 app/
 ├── Http/
-│   └── Middleware/
-│       ├── SuperAdminMiddleware.php   # Role guard for super-admin routes
-│       └── UpdateLastLogin.php       # Stamps last_login_at on auth'd requests
+│   ├── Controllers/
+│   │   └── SuperAdmin/
+│   │       ├── BusinessController.php        # Business CRUD (index, create, store, edit, update, destroy)
+│   │       ├── RolesPermissionsController.php # Role & permission management
+│   │       └── SettingsController.php         # Platform settings management
+│   ├── Middleware/
+│   │   ├── SuperAdminMiddleware.php   # Role guard for super-admin routes
+│   │   └── UpdateLastLogin.php       # Stamps last_login_at on auth'd requests
+│   └── Requests/
+│       └── SuperAdmin/
+│           ├── StoreBusinessRequest.php    # Validation for creating business
+│           └── UpdateBusinessRequest.php   # Validation for updating business
 ├── Livewire/
 │   ├── Auth/
 │   │   ├── Login.php                 # Rate-limited super admin login
@@ -73,9 +82,6 @@ app/
 │   └── SuperAdmin/
 │       ├── Dashboard/
 │       │   └── DashboardPage.php     # Stats, recent businesses, quick actions
-│       ├── Businesses/
-│       │   ├── BusinessListing.php   # Paginated, filterable, sortable table
-│       │   └── BusinessCreation.php  # Validated business creation form
 │       ├── Staff/
 │       │   └── StaffManagement.php   # Staff CRUD with role assignment
 │       ├── Roles/
@@ -107,13 +113,16 @@ resources/views/
 │       ├── table.blade.php         # Responsive table wrapper
 │       ├── modal.blade.php         # Livewire-entangled modal overlay
 │       └── empty-state.blade.php   # Zero-data placeholder
+├── super-admin/
+│   └── businesses/
+│       ├── index.blade.php         # Business listing with filters and pagination
+│       ├── create.blade.php        # Business creation form
+│       └── edit.blade.php          # Business edit form
 └── livewire/
     ├── auth/
     │   └── login.blade.php
     └── super-admin/
         ├── dashboard/dashboard-page.blade.php
-        ├── businesses/business-listing.blade.php
-        ├── businesses/business-creation.blade.php
         ├── staff/staff-management.blade.php
         ├── roles/roles-permissions.blade.php
         └── settings/platform-settings.blade.php
@@ -130,14 +139,19 @@ database/
 
 ## 🛣️ Routes
 
-| Method | URL | Name | Component |
+| Method | URL | Name | Controller/Component |
 |--------|-----|------|-----------|
 | GET | `/` | — | → redirect to dashboard |
 | GET | `/super-admin/login` | `super-admin.login` | `Auth\Login` |
 | POST | `/super-admin/logout` | `super-admin.logout` | `Auth\Logout` |
 | GET | `/super-admin/dashboard` | `super-admin.dashboard` | `Dashboard\DashboardPage` |
-| GET | `/super-admin/businesses` | `super-admin.businesses.index` | `Businesses\BusinessListing` |
-| GET | `/super-admin/businesses/create` | `super-admin.businesses.create` | `Businesses\BusinessCreation` |
+| GET | `/super-admin/businesses` | `super-admin.businesses.index` | `BusinessController@index` |
+| GET | `/super-admin/businesses/create` | `super-admin.businesses.create` | `BusinessController@create` |
+| POST | `/super-admin/businesses` | `super-admin.businesses.store` | `BusinessController@store` |
+| GET | `/super-admin/businesses/{business}/edit` | `super-admin.businesses.edit` | `BusinessController@edit` |
+| PUT | `/super-admin/businesses/{business}` | `super-admin.businesses.update` | `BusinessController@update` |
+| POST | `/super-admin/businesses/bulk-status` | `super-admin.businesses.bulk-status` | `BusinessController@bulkUpdateStatus` |
+| DELETE | `/super-admin/businesses/delete` | `super-admin.businesses.destroy` | `BusinessController@destroy` |
 | GET | `/super-admin/staff` | `super-admin.staff.index` | `Staff\StaffManagement` |
 | GET | `/super-admin/roles` | `super-admin.roles.index` | `Roles\RolesPermissions` |
 | GET | `/super-admin/settings` | `super-admin.settings.index` | `Settings\PlatformSettings` |
