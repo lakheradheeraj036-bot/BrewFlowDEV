@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BrewFlow Docs — Architecture & Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --sidebar-bg: #0f172a;
+    --sidebar-border: #1e293b;
+    --sidebar-text: #94a3b8;
+    --sidebar-active: #f59e0b;
+    --accent: #f59e0b;
+    --accent-light: #fef3c7;
+    --content-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --green: #10b981;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--content-bg); color: var(--text); display: flex; min-height: 100vh; font-size: 15px; line-height: 1.6; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 268px; flex-shrink: 0; background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    position: fixed; top: 0; left: 0; height: 100vh;
+    overflow-y: auto; z-index: 100; display: flex; flex-direction: column;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 20px 16px; border-bottom: 1px solid var(--sidebar-border);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 34px; height: 34px; background: var(--accent);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .logo-icon svg { width: 20px; height: 20px; color: #fff; }
+  .logo-text { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .logo-sub { font-size: 11px; color: #475569; }
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+  .nav-group { padding: 16px 20px 4px; }
+  .nav-group-label { font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: .08em; }
+  .nav-link {
+    display: flex; align-items: center; gap: 8px; padding: 7px 20px;
+    font-size: 13px; color: var(--sidebar-text); text-decoration: none;
+    transition: all .15s; border-left: 2px solid transparent;
+  }
+  .nav-link:hover { color: #e2e8f0; background: rgba(255,255,255,.03); }
+  .nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(245,158,11,.06); }
+  .nav-link .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: .6; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--sidebar-border); }
+  .sidebar-footer a { font-size: 12px; color: #475569; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+  .sidebar-footer a:hover { color: var(--accent); }
+
+  /* ── CONTENT ── */
+  .content { margin-left: 268px; flex: 1; min-width: 0; }
+  .page-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 56px 60px 48px; border-bottom: 1px solid var(--border);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(245,158,11,.15); border: 1px solid rgba(245,158,11,.3);
+    color: var(--accent); font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+  }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .hero-title { font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -.02em; margin-bottom: 10px; }
+  .hero-title span { color: var(--accent); }
+  .hero-subtitle { font-size: 16px; color: #94a3b8; max-width: 520px; }
+  .hero-meta { display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+  .meta-badge {
+    display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1); color: #cbd5e1;
+    font-size: 12px; padding: 5px 12px; border-radius: 8px;
+  }
+  .meta-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .main { padding: 0 60px 80px; max-width: 900px; }
+
+  /* ── SECTIONS ── */
+  .section { padding-top: 56px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+  .section-number {
+    width: 32px; height: 32px; background: var(--accent); color: #fff;
+    border-radius: 8px; font-size: 14px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--text); }
+  .section-divider { border: none; border-top: 1px solid var(--border); margin: 48px 0 0; }
+  h3 { font-size: 17px; font-weight: 700; color: var(--text); margin: 32px 0 12px; }
+  h4 { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin: 24px 0 8px; }
+  p { color: var(--text-muted); margin-bottom: 14px; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    display: flex; gap: 12px; padding: 14px 16px;
+    border-radius: 10px; margin: 20px 0; font-size: 14px;
+  }
+  .callout-icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout.amber { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+  .callout.blue { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+  .callout.green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+  .callout.red { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+  .callout-title { font-weight: 700; margin-bottom: 3px; }
+  .callout p { margin: 0; color: inherit; }
+
+  /* ── CODE BLOCKS ── */
+  .code-block { background: var(--code-bg); border-radius: 10px; overflow: hidden; margin: 16px 0; border: 1px solid #1e293b; }
+  .code-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #1e293b; border-bottom: 1px solid #334155; }
+  .code-lang { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .08em; }
+  .code-file { font-size: 11px; color: var(--accent); font-family: 'Menlo','Monaco','Courier New',monospace; }
+  .code-block pre { padding: 18px 20px; overflow-x: auto; }
+  .code-block pre::-webkit-scrollbar { height: 4px; }
+  .code-block pre::-webkit-scrollbar-thumb { background: #334155; }
+  .code-block code { font-family: 'Menlo','Monaco','Courier New',monospace; font-size: 13px; line-height: 1.7; color: var(--code-text); }
+  .hl-key { color: #c084fc; } /* purple - keywords */
+  .hl-str { color: #86efac; } /* green - strings */
+  .hl-cmt { color: #475569; font-style: italic; } /* gray - comments */
+  .hl-fn  { color: #60a5fa; } /* blue - functions */
+  .hl-cls { color: #f59e0b; } /* amber - classes */
+  .hl-num { color: #fb923c; } /* orange - numbers */
+  .hl-attr{ color: #7dd3fc; } /* sky - attributes/props */
+
+  /* ── INLINE CODE ── */
+  code { font-family: 'Menlo','Monaco','Courier New',monospace; font-size: 12.5px; background: #f1f5f9; color: #c026d3; padding: 2px 6px; border-radius: 5px; border: 1px solid #e2e8f0; }
+  .code-block code { background: none; color: inherit; padding: 0; border: none; font-size: 13px; }
+
+  /* ── FILE PILL ── */
+  .file-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #1e293b; color: var(--accent);
+    font-family: 'Menlo','Monaco','Courier New',monospace; font-size: 11.5px;
+    padding: 3px 10px; border-radius: 6px; margin: 2px 0;
+    border: 1px solid #334155;
+  }
+  .file-pill svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ── TABLES ── */
+  .doc-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; }
+  .doc-table th { background: #f1f5f9; color: var(--text); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); }
+  .doc-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-muted); vertical-align: top; }
+  .doc-table tr:last-child td { border-bottom: none; }
+  .doc-table tr:hover td { background: #f8fafc; }
+  .doc-table td:first-child { font-family: 'Menlo','Monaco','Courier New',monospace; color: var(--text); font-size: 12px; }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: #cbd5e1; }
+
+  /* ── FLOW STEPS ── */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 20px 0; }
+  .flow-step { display: flex; gap: 16px; position: relative; }
+  .flow-step:not(:last-child)::before {
+    content: ''; position: absolute; left: 15px; top: 34px;
+    width: 2px; height: calc(100% - 10px); background: var(--border); z-index: 0;
+  }
+  .flow-num {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-size: 13px; font-weight: 800; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+  }
+  .flow-body { padding: 4px 0 28px; flex: 1; }
+  .flow-title { font-weight: 700; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+  .flow-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .flow-desc code { font-size: 11.5px; }
+
+  /* ── TREE ── */
+  .file-tree { background: var(--code-bg); border: 1px solid #1e293b; border-radius: 10px; padding: 20px 24px; font-family: 'Menlo','Monaco','Courier New',monospace; font-size: 12.5px; line-height: 2; overflow-x: auto; margin: 16px 0; }
+  .tree-dir { color: #60a5fa; font-weight: 700; }
+  .tree-file { color: #e2e8f0; }
+  .tree-comment { color: #475569; font-style: italic; }
+  .tree-accent { color: var(--accent); }
+
+  /* ── CARDS GRID ── */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .info-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .info-card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .info-card-title .icon { width: 20px; height: 20px; }
+  .info-card p { font-size: 13px; margin: 0; }
+  @media (max-width: 700px) { .card-grid { grid-template-columns: 1fr; } }
+
+  /* ── SCHEMA CARD ── */
+  .schema-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin: 16px 0; overflow: hidden; }
+  .schema-card-header { background: #f1f5f9; padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .schema-table-name { font-family: 'Menlo','Monaco','Courier New',monospace; font-size: 13px; font-weight: 700; color: var(--text); }
+  .schema-badge { font-size: 10px; font-weight: 700; background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 10px; }
+
+  /* ── QUICK REF ── */
+  .creds-box { background: var(--code-bg); border: 1px solid #1e293b; border-radius: 10px; padding: 18px 22px; margin: 16px 0; }
+  .creds-row { display: flex; align-items: center; gap: 16px; padding: 8px 0; border-bottom: 1px solid #1e293b; font-size: 13px; }
+  .creds-row:last-child { border-bottom: none; }
+  .creds-label { color: #64748b; width: 110px; flex-shrink: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .creds-val { font-family: 'Menlo','Monaco','Courier New',monospace; color: #e2e8f0; }
+  .creds-role { margin-left: auto; background: rgba(245,158,11,.15); color: var(--accent); font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 20px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); transition: transform .3s; }
+    .sidebar.open { transform: translateX(0); }
+    .content { margin-left: 0; }
+    .page-hero, .main { padding-left: 24px; padding-right: 24px; }
+    .mobile-toggle { display: flex !important; }
+  }
+  .mobile-toggle {
+    display: none; position: fixed; bottom: 24px; right: 24px; z-index: 200;
+    width: 48px; height: 48px; background: var(--accent); border-radius: 50%;
+    align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    cursor: pointer; border: none;
+  }
+  .mobile-toggle svg { width: 22px; height: 22px; color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <a href="#" class="sidebar-logo">
+    <div class="logo-icon">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">BrewFlow</div>
+      <div class="logo-sub">Developer Docs</div>
+    </div>
+  </a>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group"><span class="nav-group-label">Getting Started</span></div>
+    <a href="#quick-start" class="nav-link active"><span class="dot"></span> Quick Start</a>
+    <a href="#folder-structure" class="nav-link"><span class="dot"></span> Folder Structure</a>
+
+    <div class="nav-group"><span class="nav-group-label">Core Systems</span></div>
+    <a href="#auth" class="nav-link"><span class="dot"></span> Authentication Flow</a>
+    <a href="#database" class="nav-link"><span class="dot"></span> Database Schema</a>
+    <a href="#roles" class="nav-link"><span class="dot"></span> Roles & Permissions</a>
+
+    <div class="nav-group"><span class="nav-group-label">Architecture</span></div>
+    <a href="#layout" class="nav-link"><span class="dot"></span> Layout System</a>
+    <a href="#routes" class="nav-link"><span class="dot"></span> Routes</a>
+    <a href="#middleware" class="nav-link"><span class="dot"></span> Middleware</a>
+
+    <div class="nav-group"><span class="nav-group-label">More</span></div>
+    <a href="components.html" class="nav-link"><span class="dot"></span> Livewire Components →</a>
+    <a href="components.html#ui-components" class="nav-link"><span class="dot"></span> UI Components →</a>
+    <a href="components.html#extending" class="nav-link"><span class="dot"></span> Extending the App →</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="components.html">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      Part 2: Components & Extending
+    </a>
+  </div>
+</aside>
+
+<!-- MOBILE TOGGLE -->
+<button class="mobile-toggle" id="mobileToggle">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="hero-badge">Live Documentation</div>
+    <h1 class="hero-title">BrewFlow <span>Super Admin</span></h1>
+    <p class="hero-subtitle">Complete architecture guide — every file explained, every pattern documented. Build with confidence.</p>
+    <div class="hero-meta">
+      <div class="meta-badge"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3l14 9-14 9V3z"/></svg> Laravel 12</div>
+      <div class="meta-badge"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg> Livewire 4</div>
+      <div class="meta-badge"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg> Tailwind CSS 4</div>
+      <div class="meta-badge"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg> Spatie Permission</div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 1: QUICK START                      -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="quick-start">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <h2 class="section-title">Quick Start</h2>
+      </div>
+
+      <h3>Login URL</h3>
+      <div class="callout amber">
+        <svg class="callout-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div>
+          <div class="callout-title">Access the Super Admin Panel</div>
+          <p>Start the server with <code>php artisan serve</code>, then visit: <strong>http://localhost:8000/super-admin/login</strong></p>
+        </div>
+      </div>
+
+      <h3>Default Credentials</h3>
+      <div class="creds-box">
+        <div class="creds-row">
+          <span class="creds-label">Email</span>
+          <span class="creds-val">admin@brewflow.com</span>
+          <span class="creds-role">super_admin</span>
+        </div>
+        <div class="creds-row">
+          <span class="creds-label">Password</span>
+          <span class="creds-val">password</span>
+        </div>
+      </div>
+      <div class="creds-box" style="margin-top:8px">
+        <div class="creds-row">
+          <span class="creds-label">Email</span>
+          <span class="creds-val">owner@brewflow.com</span>
+          <span class="creds-role">business_owner</span>
+        </div>
+        <div class="creds-row">
+          <span class="creds-label">Password</span>
+          <span class="creds-val">password</span>
+        </div>
+      </div>
+
+      <h3>Essential Commands</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">shell</span></div>
+        <pre><code><span class="hl-cmt"># Start development server</span>
+php artisan serve
+
+<span class="hl-cmt"># Reset database + reseed all sample data</span>
+php artisan migrate:fresh --seed
+
+<span class="hl-cmt"># Watch assets (development)</span>
+npm run dev
+
+<span class="hl-cmt"># Build assets for production</span>
+npm run build
+
+<span class="hl-cmt"># Clear all caches</span>
+php artisan optimize:clear
+
+<span class="hl-cmt"># Run all dev services at once (server + queue + logs + vite)</span>
+composer run dev</code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 2: FOLDER STRUCTURE                 -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="folder-structure">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <h2 class="section-title">Folder Structure</h2>
+      </div>
+      <p>Every important file annotated with what it does and why it exists.</p>
+
+      <h3>App Layer — PHP Classes</h3>
+      <div class="file-tree">
+<span class="tree-dir">app/</span>
+├── <span class="tree-dir">Http/Middleware/</span>
+│   ├── <span class="tree-file">SuperAdminMiddleware.php</span>   <span class="tree-comment">← Route guard. Is user logged in? Is user super_admin?</span>
+│   └── <span class="tree-file">UpdateLastLogin.php</span>        <span class="tree-comment">← Silently stamps last_login_at on every web request</span>
+│
+├── <span class="tree-dir">Livewire/</span>                        <span class="tree-comment">← ALL interactive page logic lives here</span>
+│   ├── <span class="tree-dir">Auth/</span>
+│   │   ├── <span class="tree-file">Login.php</span>               <span class="tree-comment">← Rate-limited login, role-verified, session-safe</span>
+│   │   └── <span class="tree-file">Logout.php</span>              <span class="tree-comment">← Destroys session, invalidates token, redirects</span>
+│   └── <span class="tree-dir">SuperAdmin/</span>
+│       ├── <span class="tree-dir">Dashboard/</span>
+│       │   └── <span class="tree-file">DashboardPage.php</span>    <span class="tree-comment">← Computed stats + recent businesses + type chart</span>
+│       ├── <span class="tree-dir">Businesses/</span>
+│       │   ├── <span class="tree-file">BusinessListing.php</span>  <span class="tree-comment">← Paginated table: search + filter + sort + delete</span>
+│       │   └── <span class="tree-file">BusinessCreation.php</span> <span class="tree-comment">← Multi-section form with #[Validate] on each property</span>
+│       ├── <span class="tree-dir">Staff/</span>
+│       │   └── <span class="tree-file">StaffManagement.php</span>  <span class="tree-comment">← CRUD + role assignment modal + status toggle</span>
+│       ├── <span class="tree-dir">Roles/</span>
+│       │   └── <span class="tree-file">RolesPermissions.php</span> <span class="tree-comment">← Click role → see permissions. Click to toggle.</span>
+│       └── <span class="tree-dir">Settings/</span>
+│           └── <span class="tree-file">PlatformSettings.php</span> <span class="tree-comment">← Tabbed settings panel, reads/writes platform_settings</span>
+│
+└── <span class="tree-dir">Models/</span>
+    ├── <span class="tree-file">User.php</span>                     <span class="tree-comment">← HasRoles (Spatie) + SoftDeletes + business relationship</span>
+    ├── <span class="tree-file">Business.php</span>                 <span class="tree-comment">← Cafe/hotel/etc. Has slug auto-gen, status_color accessor</span>
+    └── <span class="tree-file">PlatformSetting.php</span>          <span class="tree-comment">← Key-value config. Static get(key) / set(key, value) helpers</span>
+      </div>
+
+      <h3>Views Layer — Blade Templates</h3>
+      <div class="file-tree">
+<span class="tree-dir">resources/views/</span>
+├── <span class="tree-dir">components/</span>                      <span class="tree-comment">← Reusable Blade components (x-component-name syntax)</span>
+│   ├── <span class="tree-dir">layouts/</span>
+│   │   ├── <span class="tree-accent">super-admin.blade.php</span>    <span class="tree-comment">← THE MAIN SHELL: sidebar + header + {{ $slot }}</span>
+│   │   └── <span class="tree-file">auth.blade.php</span>           <span class="tree-comment">← Minimal dark shell for the login page only</span>
+│   ├── <span class="tree-dir">super-admin/</span>                 <span class="tree-comment">← Admin-specific layout parts (x-super-admin.*)</span>
+│   │   ├── <span class="tree-file">sidebar.blade.php</span>        <span class="tree-comment">← Collapsible desktop sidebar + mobile slide-over</span>
+│   │   ├── <span class="tree-file">header.blade.php</span>         <span class="tree-comment">← Sticky top bar: toggle, title, search, user menu</span>
+│   │   ├── <span class="tree-file">nav-item.blade.php</span>       <span class="tree-comment">← Single nav link: active detection + icon + label</span>
+│   │   └── <span class="tree-file">breadcrumb.blade.php</span>     <span class="tree-comment">← Breadcrumb trail from array of items</span>
+│   └── <span class="tree-dir">ui/</span>                          <span class="tree-comment">← Generic reusable primitives (x-ui.*)</span>
+│       ├── <span class="tree-file">stats-card.blade.php</span>     <span class="tree-comment">← KPI card: big number + icon + trend arrow</span>
+│       ├── <span class="tree-file">card.blade.php</span>           <span class="tree-comment">← White panel with optional title/description/action</span>
+│       ├── <span class="tree-file">badge.blade.php</span>          <span class="tree-comment">← Colored status pill (8 colors)</span>
+│       ├── <span class="tree-file">button.blade.php</span>         <span class="tree-comment">← Works as button or anchor. 6 variants.</span>
+│       ├── <span class="tree-file">input.blade.php</span>          <span class="tree-comment">← Label + error + hint + optional prefix</span>
+│       ├── <span class="tree-file">select.blade.php</span>         <span class="tree-comment">← Styled select with custom chevron</span>
+│       ├── <span class="tree-file">table.blade.php</span>          <span class="tree-comment">← Responsive overflow-x wrapper for tables</span>
+│       ├── <span class="tree-file">modal.blade.php</span>          <span class="tree-comment">← Livewire wire:model entangled overlay</span>
+│       └── <span class="tree-file">empty-state.blade.php</span>   <span class="tree-comment">← Zero-data placeholder with icon, title, action</span>
+│
+└── <span class="tree-dir">livewire/</span>                        <span class="tree-comment">← Blade views for Livewire (mirror of app/Livewire/)</span>
+    ├── <span class="tree-dir">auth/</span>
+    │   └── <span class="tree-file">login.blade.php</span>          <span class="tree-comment">← Dark glassmorphism login card</span>
+    └── <span class="tree-dir">super-admin/</span>
+        ├── <span class="tree-dir">dashboard/</span>dashboard-page.blade.php
+        ├── <span class="tree-dir">businesses/</span>business-listing.blade.php
+        ├── <span class="tree-dir">businesses/</span>business-creation.blade.php
+        ├── <span class="tree-dir">staff/</span>staff-management.blade.php
+        ├── <span class="tree-dir">roles/</span>roles-permissions.blade.php
+        └── <span class="tree-dir">settings/</span>platform-settings.blade.php
+      </div>
+
+      <h3>Database & Routes</h3>
+      <div class="file-tree">
+<span class="tree-dir">database/</span>
+├── <span class="tree-dir">migrations/</span>
+│   ├── <span class="tree-file">0001_01_01_..._create_users_table</span>            <span class="tree-comment">← Standard Laravel users</span>
+│   ├── <span class="tree-file">2025_01_01_000001_create_businesses_table</span>    <span class="tree-comment">← businesses: name, type, status, plan, etc.</span>
+│   ├── <span class="tree-file">2025_01_01_000002_add_business_id_to_users</span>   <span class="tree-comment">← Adds: business_id, avatar, status, phone, last_login_at</span>
+│   ├── <span class="tree-file">2025_01_01_000003_create_platform_settings</span>  <span class="tree-comment">← Key-value config store</span>
+│   └── <span class="tree-file">2026_..._create_permission_tables</span>           <span class="tree-comment">← Spatie: roles, permissions, pivot tables</span>
+└── <span class="tree-dir">seeders/</span>
+    ├── <span class="tree-file">RolesPermissionsSeeder.php</span>  <span class="tree-comment">← Creates 5 roles + 30 permissions. RUNS FIRST.</span>
+    ├── <span class="tree-file">SuperAdminSeeder.php</span>        <span class="tree-comment">← Creates admin@brewflow.com with super_admin role</span>
+    ├── <span class="tree-file">BusinessSeeder.php</span>          <span class="tree-comment">← Seeds 6 sample Australian businesses</span>
+    └── <span class="tree-file">DatabaseSeeder.php</span>          <span class="tree-comment">← Orchestrates the three seeders in correct order</span>
+
+<span class="tree-dir">routes/</span>
+└── <span class="tree-accent">web.php</span>                         <span class="tree-comment">← ALL routes. Root redirect + guest + auth+super_admin groups</span>
+
+<span class="tree-dir">bootstrap/</span>
+└── <span class="tree-accent">app.php</span>                         <span class="tree-comment">← Middleware registered here: alias + web group append</span>
+      </div>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 3: AUTHENTICATION FLOW              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="auth">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <h2 class="section-title">Authentication Flow</h2>
+      </div>
+      <p>Step-by-step walkthrough of how login, route protection, and logout work.</p>
+
+      <h3>Login Flow</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-body">
+            <div class="flow-title">User visits <code>/super-admin/login</code></div>
+            <div class="flow-desc">
+              Route is inside <code>middleware('guest')</code> group — logged-in users are redirected away.
+              Loads the <code>App\Livewire\Auth\Login</code> component wrapped in <code>components.layouts.auth</code>.
+            </div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-body">
+            <div class="flow-title">User submits form → <code>wire:submit="login"</code></div>
+            <div class="flow-desc">
+              Livewire calls <code>Login::login()</code>. Fields are validated with <code>#[Validate]</code> attributes first. Then a rate-limiter key (<code>email|ip</code>) is checked — max 5 attempts before lockout.
+            </div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-body">
+            <div class="flow-title"><code>Auth::attempt()</code> is called</div>
+            <div class="flow-desc">
+              If credentials fail → <code>RateLimiter::hit()</code>, error message set, password cleared.<br/>
+              If credentials pass → move to step 4.
+            </div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-body">
+            <div class="flow-title">Role is verified</div>
+            <div class="flow-desc">
+              <code>auth()->user()->hasRole('super_admin')</code> is checked.
+              If <strong>not</strong> super_admin → <code>Auth::logout()</code> immediately, error displayed.
+              This prevents business_owner/staff from accessing the super admin panel even with valid credentials.
+            </div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <div class="flow-body">
+            <div class="flow-title">Session regenerated → redirect to dashboard</div>
+            <div class="flow-desc">
+              <code>RateLimiter::clear()</code>, <code>session()->regenerate()</code>, then
+              <code>$this->redirect(route('super-admin.dashboard'), navigate: true)</code>.
+              The <code>navigate: true</code> flag uses Livewire's SPA navigation (no full page reload).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Route Protection Flow</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-body">
+            <div class="flow-title">Request hits a protected route</div>
+            <div class="flow-desc">e.g. <code>GET /super-admin/dashboard</code> — middleware stack: <code>['auth', 'super_admin']</code></div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-body">
+            <div class="flow-title">Laravel's built-in <code>auth</code> middleware runs</div>
+            <div class="flow-desc">Is the user logged in? If not → redirect to <code>super-admin.login</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-body">
+            <div class="flow-title"><code>SuperAdminMiddleware</code> runs</div>
+            <div class="flow-desc">Calls <code>auth()->user()->hasRole('super_admin')</code>. If false → <code>abort(403)</code>. The alias <code>'super_admin'</code> is registered in <code>bootstrap/app.php</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-body">
+            <div class="flow-title"><code>UpdateLastLogin</code> middleware runs (on every web request)</div>
+            <div class="flow-desc">Calls <code>auth()->user()->updateQuietly(['last_login_at' => now()])</code> silently — no events fired, no timestamps updated.</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Key Files</h3>
+      <table class="doc-table">
+        <thead><tr><th>File</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td>app/Livewire/Auth/Login.php</td><td>Rate-limiting, credential check, role guard, session regen</td></tr>
+          <tr><td>app/Http/Middleware/SuperAdminMiddleware.php</td><td>Route-level role check → abort(403) or pass through</td></tr>
+          <tr><td>app/Http/Middleware/UpdateLastLogin.php</td><td>Stamps last_login_at quietly on every authenticated request</td></tr>
+          <tr><td>bootstrap/app.php</td><td>Registers <code>'super_admin'</code> alias + appends UpdateLastLogin to web group</td></tr>
+          <tr><td>routes/web.php</td><td>Defines middleware groups around route groups</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Logout Flow</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">app/Livewire/Auth/Logout.php</span></div>
+        <pre><code><span class="hl-key">public function</span> <span class="hl-fn">logout</span>(): <span class="hl-cls">void</span>
+{
+    <span class="hl-cls">Auth</span>::<span class="hl-fn">logout</span>();              <span class="hl-cmt">// Clear auth state</span>
+    <span class="hl-fn">session</span>()-><span class="hl-fn">invalidate</span>();    <span class="hl-cmt">// Destroy the session</span>
+    <span class="hl-fn">session</span>()-><span class="hl-fn">regenerateToken</span>(); <span class="hl-cmt">// New CSRF token</span>
+    <span class="hl-key">$this</span>-><span class="hl-fn">redirect</span>(<span class="hl-fn">route</span>(<span class="hl-str">'super-admin.login'</span>), navigate: <span class="hl-key">true</span>);
+}</code></pre>
+      </div>
+      <p>The logout is triggered by the <code>&lt;form method="POST"&gt;</code> inside <code>header.blade.php</code>. It POSTs to <code>/super-admin/logout</code> which maps to this component.</p>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 4: DATABASE SCHEMA                  -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="database">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <h2 class="section-title">Database Schema</h2>
+      </div>
+      <p>All tables created by migrations. Run <code>php artisan migrate:fresh --seed</code> to create and populate them.</p>
+
+      <!-- users -->
+      <div class="schema-card">
+        <div class="schema-card-header">
+          <span class="schema-table-name">users</span>
+          <span class="schema-badge">Standard + Extended</span>
+        </div>
+        <table class="doc-table" style="margin:0">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>id</td><td>bigint PK</td><td>Auto-increment primary key</td></tr>
+            <tr><td>business_id</td><td>bigint FK</td><td>References businesses.id — null for super admin</td></tr>
+            <tr><td>name</td><td>varchar</td><td>Full display name</td></tr>
+            <tr><td>email</td><td>varchar</td><td>Unique. Used for login.</td></tr>
+            <tr><td>password</td><td>varchar</td><td>Bcrypt hashed (cast: 'hashed')</td></tr>
+            <tr><td>avatar</td><td>varchar</td><td>Path to avatar image (nullable)</td></tr>
+            <tr><td>status</td><td>enum</td><td>active | inactive | suspended</td></tr>
+            <tr><td>phone</td><td>varchar</td><td>Optional contact phone</td></tr>
+            <tr><td>last_login_at</td><td>timestamp</td><td>Updated by UpdateLastLogin middleware</td></tr>
+            <tr><td>email_verified_at</td><td>timestamp</td><td>Null = not verified</td></tr>
+            <tr><td>remember_token</td><td>varchar</td><td>Used by "remember me" feature</td></tr>
+            <tr><td>deleted_at</td><td>timestamp</td><td>SoftDeletes — null = not deleted</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- businesses -->
+      <div class="schema-card" style="margin-top:16px">
+        <div class="schema-card-header">
+          <span class="schema-table-name">businesses</span>
+          <span class="schema-badge">Core Entity</span>
+        </div>
+        <table class="doc-table" style="margin:0">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>id</td><td>bigint PK</td><td>Auto-increment primary key</td></tr>
+            <tr><td>name</td><td>varchar</td><td>Business display name</td></tr>
+            <tr><td>slug</td><td>varchar</td><td>URL-safe unique name. Auto-generated from name on create.</td></tr>
+            <tr><td>type</td><td>enum</td><td>cafe | hotel | restaurant | bar | other</td></tr>
+            <tr><td>status</td><td>enum</td><td>active | inactive | suspended | pending</td></tr>
+            <tr><td>email</td><td>varchar</td><td>Contact email (nullable)</td></tr>
+            <tr><td>phone</td><td>varchar</td><td>Contact phone (nullable)</td></tr>
+            <tr><td>address</td><td>text</td><td>Full street address</td></tr>
+            <tr><td>city</td><td>varchar</td><td>City name</td></tr>
+            <tr><td>country</td><td>varchar</td><td>Default: Australia</td></tr>
+            <tr><td>timezone</td><td>varchar</td><td>Default: Australia/Sydney</td></tr>
+            <tr><td>currency</td><td>varchar</td><td>Default: AUD</td></tr>
+            <tr><td>logo</td><td>varchar</td><td>Logo file path (nullable)</td></tr>
+            <tr><td>settings</td><td>json</td><td>Cast to array. Extra config per business.</td></tr>
+            <tr><td>subscription_plan</td><td>varchar</td><td>free | starter | professional | enterprise</td></tr>
+            <tr><td>subscription_expires_at</td><td>timestamp</td><td>When current plan expires</td></tr>
+            <tr><td>owner_id</td><td>bigint FK</td><td>References users.id (nullable)</td></tr>
+            <tr><td>deleted_at</td><td>timestamp</td><td>SoftDeletes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- platform_settings -->
+      <div class="schema-card" style="margin-top:16px">
+        <div class="schema-card-header">
+          <span class="schema-table-name">platform_settings</span>
+          <span class="schema-badge">Key-Value Config</span>
+        </div>
+        <table class="doc-table" style="margin:0">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>key</td><td>varchar UNIQUE</td><td>Setting identifier e.g. <code>platform_name</code></td></tr>
+            <tr><td>value</td><td>longText</td><td>The stored value (always string in DB)</td></tr>
+            <tr><td>group</td><td>varchar</td><td>general | features | billing | security</td></tr>
+            <tr><td>type</td><td>varchar</td><td>string | boolean | integer | json — for casting on read</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Spatie Permission Tables</h3>
+      <p>Created automatically by the Spatie package migration. You do not edit these directly.</p>
+      <table class="doc-table">
+        <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>roles</td><td>Defines each role (super_admin, manager, etc.)</td></tr>
+          <tr><td>permissions</td><td>Defines each permission string (business.view, staff.create, etc.)</td></tr>
+          <tr><td>model_has_roles</td><td>Links users to roles (many-to-many pivot)</td></tr>
+          <tr><td>model_has_permissions</td><td>Links users to permissions directly (bypassing roles)</td></tr>
+          <tr><td>role_has_permissions</td><td>Links roles to permissions (this is what you manage in the UI)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Model Relationships</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">Relationships summary</span></div>
+        <pre><code><span class="hl-cmt">// User belongs to a Business</span>
+<span class="hl-cls">User</span> -> <span class="hl-fn">belongsTo</span>(<span class="hl-cls">Business</span>::<span class="hl-key">class</span>, <span class="hl-str">'business_id'</span>)
+
+<span class="hl-cmt">// Business has many Staff (Users assigned to it)</span>
+<span class="hl-cls">Business</span> -> <span class="hl-fn">hasMany</span>(<span class="hl-cls">User</span>::<span class="hl-key">class</span>, <span class="hl-str">'business_id'</span>)
+
+<span class="hl-cmt">// Business has one Owner (a User)</span>
+<span class="hl-cls">Business</span> -> <span class="hl-fn">belongsTo</span>(<span class="hl-cls">User</span>::<span class="hl-key">class</span>, <span class="hl-str">'owner_id'</span>)
+
+<span class="hl-cmt">// User has many Roles (via Spatie HasRoles trait)</span>
+<span class="hl-cls">User</span> -> <span class="hl-fn">belongsToMany</span>(<span class="hl-cls">Role</span>::<span class="hl-key">class</span>)  <span class="hl-cmt">// through model_has_roles</span></code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 5: ROLES & PERMISSIONS              -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="roles">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <h2 class="section-title">Roles &amp; Permissions</h2>
+      </div>
+
+      <h3>The 5 Roles</h3>
+      <table class="doc-table">
+        <thead><tr><th>Role</th><th>Who is it?</th><th>Panel Access</th></tr></thead>
+        <tbody>
+          <tr><td>super_admin</td><td>Platform owner — you</td><td>Full super-admin panel</td></tr>
+          <tr><td>business_owner</td><td>Cafe/hotel owner</td><td>Their business portal</td></tr>
+          <tr><td>manager</td><td>Business manager</td><td>Staff + menu + orders</td></tr>
+          <tr><td>staff</td><td>Front-of-house staff</td><td>Orders + menu view</td></tr>
+          <tr><td>kitchen_staff</td><td>Kitchen team</td><td>Order view/edit + menu view</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Permission Matrix (Selected)</h3>
+      <table class="doc-table">
+        <thead><tr><th>Permission</th><th>super_admin</th><th>business_owner</th><th>manager</th><th>staff</th></tr></thead>
+        <tbody>
+          <tr><td>dashboard.view</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td>business.create / edit / delete</td><td class="check">✓</td><td class="cross">—</td><td class="cross">—</td><td class="cross">—</td></tr>
+          <tr><td>staff.create / edit</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="cross">—</td></tr>
+          <tr><td>staff.delete</td><td class="check">✓</td><td class="check">✓</td><td class="cross">—</td><td class="cross">—</td></tr>
+          <tr><td>menu.create / edit</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="cross">—</td></tr>
+          <tr><td>order.create</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          <tr><td>settings.view / edit</td><td class="check">✓</td><td class="cross">—</td><td class="cross">—</td><td class="cross">—</td></tr>
+          <tr><td>report.export</td><td class="check">✓</td><td class="check">✓</td><td class="cross">—</td><td class="cross">—</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Using Roles in Code</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">PHP — Livewire / Controllers</span></div>
+        <pre><code><span class="hl-cmt">// Check role</span>
+<span class="hl-fn">auth</span>()-><span class="hl-fn">user</span>()-><span class="hl-fn">hasRole</span>(<span class="hl-str">'super_admin'</span>);   <span class="hl-cmt">// returns bool</span>
+<span class="hl-fn">auth</span>()-><span class="hl-fn">user</span>()-><span class="hl-fn">isSuperAdmin</span>();           <span class="hl-cmt">// helper on User model</span>
+
+<span class="hl-cmt">// Check permission</span>
+<span class="hl-fn">auth</span>()-><span class="hl-fn">user</span>()-><span class="hl-fn">can</span>(<span class="hl-str">'business.create'</span>);
+<span class="hl-fn">auth</span>()-><span class="hl-fn">user</span>()-><span class="hl-fn">hasPermissionTo</span>(<span class="hl-str">'staff.delete'</span>);
+
+<span class="hl-cmt">// Assign a role</span>
+<span class="hl-key">$user</span>-><span class="hl-fn">assignRole</span>(<span class="hl-str">'manager'</span>);
+
+<span class="hl-cmt">// Remove a role</span>
+<span class="hl-key">$user</span>-><span class="hl-fn">removeRole</span>(<span class="hl-str">'staff'</span>);
+
+<span class="hl-cmt">// Give permission directly to a role</span>
+<span class="hl-key">$role</span>-><span class="hl-fn">givePermissionTo</span>(<span class="hl-str">'report.export'</span>);
+<span class="hl-key">$role</span>-><span class="hl-fn">revokePermissionTo</span>(<span class="hl-str">'report.export'</span>);</code></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">blade</span><span class="code-file">Blade Templates</span></div>
+        <pre><code><span class="hl-cmt">{{-- Show content only to super_admin --}}</span>
+@<span class="hl-fn">role</span>(<span class="hl-str">'super_admin'</span>)
+    &lt;<span class="hl-attr">p</span>&gt;Super admin only&lt;/<span class="hl-attr">p</span>&gt;
+@<span class="hl-fn">endrole</span>
+
+<span class="hl-cmt">{{-- Show button only if user can create businesses --}}</span>
+@<span class="hl-fn">can</span>(<span class="hl-str">'business.create'</span>)
+    &lt;<span class="hl-attr">x-ui.button</span>&gt;Add Business&lt;/<span class="hl-attr">x-ui.button</span>&gt;
+@<span class="hl-fn">endcan</span></code></pre>
+      </div>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 6: LAYOUT SYSTEM                    -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="layout">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <h2 class="section-title">Layout System</h2>
+      </div>
+      <p>No <code>@extends</code> or <code>@yield</code>. Everything uses Blade components and slots.</p>
+
+      <h3>How It Works</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">app/Livewire/SuperAdmin/Dashboard/DashboardPage.php</span></div>
+        <pre><code><span class="hl-attr">#[Layout</span>(<span class="hl-str">'components.layouts.super-admin'</span>)<span class="hl-attr">]</span>
+<span class="hl-attr">#[Title</span>(<span class="hl-str">'Dashboard'</span>)<span class="hl-attr">]</span>
+<span class="hl-key">class</span> <span class="hl-cls">DashboardPage</span> <span class="hl-key">extends</span> <span class="hl-cls">Component</span>
+{
+    <span class="hl-key">public function</span> <span class="hl-fn">render</span>()
+    {
+        <span class="hl-key">return</span> <span class="hl-fn">view</span>(<span class="hl-str">'livewire.super-admin.dashboard.dashboard-page'</span>);
+        <span class="hl-cmt">// ↑ Livewire automatically wraps this in the #[Layout] shell</span>
+    }
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">blade</span><span class="code-file">resources/views/components/layouts/super-admin.blade.php (simplified)</span></div>
+        <pre><code>&lt;<span class="hl-attr">body</span> <span class="hl-attr">x-data</span>=<span class="hl-str">"{ sidebarOpen: true, sidebarMobileOpen: false }"</span>&gt;
+    &lt;<span class="hl-attr">div</span> <span class="hl-attr">class</span>=<span class="hl-str">"flex h-full"</span>&gt;
+        &lt;<span class="hl-attr">x-super-admin.sidebar</span> /&gt;       <span class="hl-cmt">{{-- reads sidebarOpen from parent x-data --}}</span>
+        &lt;<span class="hl-attr">div</span> <span class="hl-attr">class</span>=<span class="hl-str">"flex-1 flex flex-col"</span>&gt;
+            &lt;<span class="hl-attr">x-super-admin.header</span> :title=<span class="hl-str">"$title ?? 'Dashboard'"</span> /&gt;
+            &lt;<span class="hl-attr">main</span>&gt;
+                <span class="hl-cmt">{{-- $slot = your Livewire component's view output --}}</span>
+                {{ <span class="hl-key">$slot</span> }}
+            &lt;/<span class="hl-attr">main</span>&gt;
+        &lt;/<span class="hl-attr">div</span>&gt;
+    &lt;/<span class="hl-attr">div</span>&gt;
+&lt;/<span class="hl-attr">body</span>&gt;</code></pre>
+      </div>
+
+      <h3>Sidebar State (Alpine.js)</h3>
+      <p>The sidebar collapse state lives in <code>x-data</code> on the <code>&lt;body&gt;</code>. Child components can read/write it because Alpine scopes cascade downward.</p>
+      <table class="doc-table">
+        <thead><tr><th>Variable</th><th>Default</th><th>What it controls</th></tr></thead>
+        <tbody>
+          <tr><td>sidebarOpen</td><td>true</td><td>Desktop sidebar width (w-64 vs w-16)</td></tr>
+          <tr><td>sidebarMobileOpen</td><td>false</td><td>Mobile sidebar visible/hidden (slide-in)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 7: ROUTES                           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="routes">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <h2 class="section-title">Routes</h2>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">routes/web.php</span></div>
+        <pre><code><span class="hl-cmt">// Root redirect</span>
+<span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/'</span>, <span class="hl-key">fn</span>() => <span class="hl-fn">redirect</span>()-><span class="hl-fn">route</span>(<span class="hl-str">'super-admin.dashboard'</span>));
+
+<span class="hl-cls">Route</span>::<span class="hl-fn">prefix</span>(<span class="hl-str">'super-admin'</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'super-admin.'</span>)-><span class="hl-fn">group</span>(<span class="hl-key">function</span> () {
+
+    <span class="hl-cmt">// Guest only (redirect if already logged in)</span>
+    <span class="hl-cls">Route</span>::<span class="hl-fn">middleware</span>(<span class="hl-str">'guest'</span>)-><span class="hl-fn">group</span>(<span class="hl-key">function</span> () {
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/login'</span>, <span class="hl-cls">Login</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'login'</span>);
+    });
+
+    <span class="hl-cmt">// Auth + super_admin role required</span>
+    <span class="hl-cls">Route</span>::<span class="hl-fn">middleware</span>([<span class="hl-str">'auth'</span>, <span class="hl-str">'super_admin'</span>])-><span class="hl-fn">group</span>(<span class="hl-key">function</span> () {
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/dashboard'</span>,         <span class="hl-cls">DashboardPage</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'dashboard'</span>);
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/businesses'</span>,        <span class="hl-cls">BusinessListing</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'businesses.index'</span>);
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/businesses/create'</span>, <span class="hl-cls">BusinessCreation</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'businesses.create'</span>);
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/staff'</span>,             <span class="hl-cls">StaffManagement</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'staff.index'</span>);
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/roles'</span>,             <span class="hl-cls">RolesPermissions</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'roles.index'</span>);
+        <span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/settings'</span>,          <span class="hl-cls">PlatformSettings</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'settings.index'</span>);
+    });
+
+    <span class="hl-cmt">// Logout (POST, auth only)</span>
+    <span class="hl-cls">Route</span>::<span class="hl-fn">post</span>(<span class="hl-str">'/logout'</span>, <span class="hl-cls">Logout</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'logout'</span>)-><span class="hl-fn">middleware</span>(<span class="hl-str">'auth'</span>);
+});</code></pre>
+      </div>
+
+      <h3>All Named Routes</h3>
+      <table class="doc-table">
+        <thead><tr><th>Name</th><th>URL</th><th>Component</th></tr></thead>
+        <tbody>
+          <tr><td>super-admin.login</td><td>GET /super-admin/login</td><td>Auth\Login</td></tr>
+          <tr><td>super-admin.logout</td><td>POST /super-admin/logout</td><td>Auth\Logout</td></tr>
+          <tr><td>super-admin.dashboard</td><td>GET /super-admin/dashboard</td><td>Dashboard\DashboardPage</td></tr>
+          <tr><td>super-admin.businesses.index</td><td>GET /super-admin/businesses</td><td>Businesses\BusinessListing</td></tr>
+          <tr><td>super-admin.businesses.create</td><td>GET /super-admin/businesses/create</td><td>Businesses\BusinessCreation</td></tr>
+          <tr><td>super-admin.staff.index</td><td>GET /super-admin/staff</td><td>Staff\StaffManagement</td></tr>
+          <tr><td>super-admin.roles.index</td><td>GET /super-admin/roles</td><td>Roles\RolesPermissions</td></tr>
+          <tr><td>super-admin.settings.index</td><td>GET /super-admin/settings</td><td>Settings\PlatformSettings</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- SECTION 8: MIDDLEWARE                        -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div class="section" id="middleware">
+      <div class="section-header">
+        <div class="section-number">8</div>
+        <h2 class="section-title">Middleware</h2>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">bootstrap/app.php — where middleware is registered</span></div>
+        <pre><code><span class="hl-fn">->withMiddleware</span>(<span class="hl-key">function</span> (<span class="hl-cls">Middleware</span> <span class="hl-key">$middleware</span>): <span class="hl-cls">void</span> {
+
+    <span class="hl-cmt">// 1. Register named alias so routes can use 'super_admin'</span>
+    <span class="hl-key">$middleware</span>-><span class="hl-fn">alias</span>([
+        <span class="hl-str">'super_admin'</span> => <span class="hl-cls">SuperAdminMiddleware</span>::<span class="hl-key">class</span>,
+    ]);
+
+    <span class="hl-cmt">// 2. Append UpdateLastLogin to every web request automatically</span>
+    <span class="hl-key">$middleware</span>-><span class="hl-fn">appendToGroup</span>(<span class="hl-str">'web'</span>, [
+        <span class="hl-cls">UpdateLastLogin</span>::<span class="hl-key">class</span>,
+    ]);
+})</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">php</span><span class="code-file">app/Http/Middleware/SuperAdminMiddleware.php</span></div>
+        <pre><code><span class="hl-key">public function</span> <span class="hl-fn">handle</span>(<span class="hl-cls">Request</span> <span class="hl-key">$request</span>, <span class="hl-cls">Closure</span> <span class="hl-key">$next</span>): <span class="hl-cls">Response</span>
+{
+    <span class="hl-key">if</span> (!<span class="hl-fn">auth</span>()-><span class="hl-fn">check</span>()) {
+        <span class="hl-key">return</span> <span class="hl-fn">redirect</span>()-><span class="hl-fn">route</span>(<span class="hl-str">'super-admin.login'</span>);
+    }
+
+    <span class="hl-key">if</span> (!<span class="hl-fn">auth</span>()-><span class="hl-fn">user</span>()-><span class="hl-fn">hasRole</span>(<span class="hl-str">'super_admin'</span>)) {
+        <span class="hl-fn">abort</span>(<span class="hl-num">403</span>, <span class="hl-str">'Super Admin privileges required.'</span>);
+    }
+
+    <span class="hl-key">return</span> <span class="hl-key">$next</span>(<span class="hl-key">$request</span>);
+}</code></pre>
+      </div>
+
+      <div class="callout blue">
+        <svg class="callout-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        <div>
+          <div class="callout-title">Tip: Adding new middleware</div>
+          <p>To add a new middleware to admin routes only, create the class in <code>app/Http/Middleware/</code>, register an alias in <code>bootstrap/app.php</code>, then add it to the route group in <code>routes/web.php</code>.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:48px; padding: 24px; background: var(--card-bg); border:1px solid var(--border); border-radius:12px; text-align:center;">
+        <p style="font-size:15px; font-weight:600; color:var(--text); margin-bottom:8px;">Continue to Part 2</p>
+        <p style="margin-bottom:16px;">Livewire Components, UI Component Reference, and How to Extend the App</p>
+        <a href="components.html" style="display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; text-decoration:none; padding:10px 22px; border-radius:8px; font-weight:700; font-size:14px;">
+          Components & Extending →
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /content -->
+
+<script>
+  // Active nav link on scroll
+  const links = document.querySelectorAll('.nav-link[href^="#"]');
+  const sections = [...links].map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => obs.observe(s));
+
+  // Mobile toggle
+  document.getElementById('mobileToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

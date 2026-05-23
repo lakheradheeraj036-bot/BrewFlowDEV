@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BrewFlow | Business Listings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@500;600;700;800&amp;family=Geist:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-error-container": "#93000a",
+                  "surface-container-lowest": "#ffffff",
+                  "on-secondary-fixed": "#1a1c1b",
+                  "primary-fixed-dim": "#c8c6c5",
+                  "error": "#ba1a1a",
+                  "inverse-on-surface": "#f4f0ef",
+                  "on-surface-variant": "#444748",
+                  "on-secondary": "#ffffff",
+                  "surface-dim": "#ddd9d8",
+                  "primary": "#000000",
+                  "secondary-fixed": "#e2e3e1",
+                  "primary-fixed": "#e5e2e1",
+                  "surface-container-highest": "#e5e2e1",
+                  "tertiary-fixed": "#e3e3dc",
+                  "on-primary-fixed": "#1c1b1b",
+                  "surface-container": "#f1edec",
+                  "on-tertiary-fixed": "#1a1c18",
+                  "on-tertiary": "#ffffff",
+                  "on-surface": "#1c1b1b",
+                  "secondary": "#5d5f5d",
+                  "tertiary": "#000000",
+                  "surface": "#fdf8f8",
+                  "on-tertiary-fixed-variant": "#464742",
+                  "on-background": "#1c1b1b",
+                  "background": "#fdf8f8",
+                  "on-primary": "#ffffff",
+                  "inverse-primary": "#c8c6c5",
+                  "surface-container-high": "#ebe7e6",
+                  "on-tertiary-container": "#83847e",
+                  "on-error": "#ffffff",
+                  "primary-container": "#1c1b1b",
+                  "outline": "#747878",
+                  "inverse-surface": "#313030",
+                  "on-secondary-fixed-variant": "#454746",
+                  "error-container": "#ffdad6",
+                  "surface-tint": "#5f5e5e",
+                  "secondary-container": "#e2e3e1",
+                  "secondary-fixed-dim": "#c6c7c5",
+                  "surface-variant": "#e5e2e1",
+                  "on-primary-container": "#858383",
+                  "on-background": "#1c1b1b",
+                  "outline-variant": "#c4c7c7",
+                  "surface-container-low": "#f7f3f2",
+                  "on-primary-fixed-variant": "#474646",
+                  "on-secondary-container": "#636563",
+                  "tertiary-container": "#1a1c18",
+                  "tertiary-fixed-dim": "#c7c7c0"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "container-padding": "32px",
+                  "section-gap": "48px",
+                  "unit": "8px",
+                  "gutter": "24px",
+                  "card-padding": "24px"
+          },
+          "fontFamily": {
+                  "body-lg": ["Inter"],
+                  "body-md": ["Inter"],
+                  "display-lg": ["Hanken Grotesk"],
+                  "headline-md": ["Hanken Grotesk"],
+                  "headline-lg-mobile": ["Hanken Grotesk"],
+                  "label-sm": ["Geist"],
+                  "headline-lg": ["Hanken Grotesk"]
+          },
+          "fontSize": {
+                  "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                  "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                  "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                  "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .double-stack-shadow {
+      box-shadow: 0px 10px 30px rgba(0,0,0, 0.04);
+      border: 1px solid #E8E8E1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e2e3e1;
+      border-radius: 10px;
+    }
+    .status-badge {
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-family: 'Geist', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-low font-body-md text-on-surface overflow-x-hidden selection:bg-primary selection:text-white">
+<!-- SideNavBar -->
+<aside class="w-[240px] h-screen fixed left-0 top-0 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline flex flex-col h-full p-4 z-50">
+<div class="flex items-center gap-3 px-2 mb-8">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">BrewFlow</h1>
+<p class="font-label-sm text-label-sm text-secondary opacity-60">Super Admin</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 custom-scrollbar overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 text-primary dark:text-primary-fixed font-bold bg-secondary-container dark:bg-primary-container rounded-lg transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span class="font-body-md text-body-md">Cafes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">hotel</span>
+<span class="font-body-md text-body-md">Hotels</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">Plans</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">manage_accounts</span>
+<span class="font-body-md text-body-md">Roles</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Staff</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-secondary dark:text-on-surface-variant hover:text-primary hover:bg-surface-container-high dark:hover:bg-surface-container transition-all duration-200 ease-in-out rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant space-y-4">
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors text-body-md" href="#">
+<span class="material-symbols-outlined">description</span>
+<span>Docs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors text-body-md" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help</span>
+</a>
+</div>
+<button class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity">
+        Support
+      </button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-[240px] min-h-screen">
+<!-- TopNavBar -->
+<header class="sticky top-0 w-full z-40 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-gutter h-16">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary opacity-50 transition-opacity group-focus-within:opacity-100">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container border-none focus:ring-2 focus:ring-primary rounded-lg text-body-md placeholder:text-secondary/50" placeholder="Search businesses, owners, or IDs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 text-secondary font-medium hover:text-primary transition-colors">Feedback</button>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx0pDvQ5EPVZIqQiteYl-T6rOvBvChSlVbIx6bDylSuza-lH0bhZSk4l3DwPWmMvyV1RgK1QCMvOUesc_Xqsn3i8LgYFk_19toi_LOTrGhvxvZaQiIzGqsTa4k3WQXBOxnuVvUDNp_odSkjtRveVjvDKYhTM5JLu5r3hi9FcibS9fnqBKjbb7bqhlr3NFZAfWfMo7Ki1ZvQJr9lmBVzLhcI113El9X2FDt_4skTKiDoGkz5VNnYKGj28y5-a5oFBNZu42-BIOiuZTC"/>
+<span class="material-symbols-outlined text-secondary">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-container-padding section-gap">
+<!-- Page Header & Filters -->
+<section class="mb-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Business Directory</h2>
+<p class="text-secondary text-body-lg max-w-2xl">Manage and monitor all hospitality partners within the BrewFlow ecosystem. Track performance, status, and subscription plans.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-5 py-2.5 border border-outline-variant rounded-lg font-medium hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+              Export List
+            </button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg font-medium hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">add</span>
+              Register Business
+            </button>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="bg-white p-4 rounded-xl border border-outline-variant flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-2 border-r border-outline-variant pr-4">
+<span class="material-symbols-outlined text-secondary">filter_list</span>
+<span class="text-label-sm font-semibold text-secondary">FILTERS:</span>
+</div>
+<div class="flex-1 flex flex-wrap gap-3">
+<select class="bg-surface-container-low border-none rounded-lg text-body-md py-1.5 px-4 focus:ring-1 focus:ring-primary min-w-[140px]">
+<option>All Types</option>
+<option>Cafes</option>
+<option>Hotels</option>
+</select>
+<select class="bg-surface-container-low border-none rounded-lg text-body-md py-1.5 px-4 focus:ring-1 focus:ring-primary min-w-[140px]">
+<option>All Status</option>
+<option>Active</option>
+<option>Pending</option>
+<option>Suspended</option>
+</select>
+<select class="bg-surface-container-low border-none rounded-lg text-body-md py-1.5 px-4 focus:ring-1 focus:ring-primary min-w-[140px]">
+<option>All Plans</option>
+<option>Enterprise</option>
+<option>Premium</option>
+<option>Basic</option>
+</select>
+<button class="text-secondary hover:text-primary transition-colors text-label-sm font-medium ml-2">Clear all</button>
+</div>
+<div class="text-label-sm text-secondary">
+            Showing <span class="font-bold text-on-surface">1-12</span> of 256 businesses
+          </div>
+</div>
+</section>
+<!-- Data Table Section -->
+<section class="bg-white rounded-[24px] border border-outline-variant overflow-hidden double-stack-shadow">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant">BUSINESS NAME</th>
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant">TYPE</th>
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant">OWNER</th>
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant">PLAN</th>
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant">STATUS</th>
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant">CREATED DATE</th>
+<th class="px-6 py-4 font-label-sm text-secondary border-b border-outline-variant text-right">ACTIONS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="group hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A sophisticated minimalist cafe interior with clean white walls and warm wood furniture, captured in a bright high-end photography style with soft natural light streaming through large windows. The atmosphere is calm and professional, reflecting a premium hospitality brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYDB7yvv7yxpfxpW9WxpeA4sacN-KzEn-JjYJhAIaRUDIuoxc4TZzCBUd8eKVYuZwBLFnQCeekKPVrtHWEkxzYxwkj8WuEAu9sLuTBr6EplR1yr917f4ExMASCW9LS4t0whKDG_kroUAYbE4tHz0Q0EG-INRTIG4f3OVtME0SbzQDmkayYIhAduKOiUFzCHhUtez888hcoT294k3XwdHa7aiUOSQfG4_T1rYa1IIqY3kvVGRH6HuqvUOA1ClagOqXC07VSdtry0v3Y"/>
+</div>
+<div>
+<div class="font-bold text-on-surface">Velvet Grounds</div>
+<div class="text-label-sm text-secondary">BF-10922</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[18px]">local_cafe</span>
+                    Cafe
+                  </div>
+</td>
+<td class="px-6 py-5">
+<div class="text-on-surface font-medium">Julian Ricci</div>
+<div class="text-label-sm text-secondary">julian@velvet.co</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-label-sm px-2 py-1 bg-primary-container text-on-primary-container rounded uppercase tracking-wider text-[10px] font-bold">Enterprise</span>
+</td>
+<td class="px-6 py-5">
+<span class="status-badge bg-green-100 text-green-700">Active</span>
+</td>
+<td class="px-6 py-5 text-secondary">Oct 24, 2023</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all" title="View Details">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all" title="Edit">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-lg text-secondary hover:text-error transition-all" title="Suspend">
+<span class="material-symbols-outlined">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A luxury hotel lobby with polished marble floors and gold accents, presented in a crisp corporate style with bright ambient lighting. The scene highlights premium hospitality standards with an elegant, modern architectural feel and a sophisticated black and white color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbOmXiTkQyR4Lib6RntwL4Sc47LUOt1rgdlFzCuh98jgNKB0gcZyIRh1ZBJk1b_HavFmsm4ZZZCxkrLXRlSWroWsHqmNlZr_1JjjQRk5j_E1d_IPF20GBBxHSJlJ7bZ5jNATe3VUfRMAD2CfuMCYsa4Myx5g7KrYqUk-we6LXi2uzz--1qi08EVQobrLQgND948YdWxM3Kk0ju2IDfRqMuYzDe7anth1YUNT3KGo4SARr6k0hLr1c7y85VZI5H9R1MrmBZ7F64Gm4W"/>
+</div>
+<div>
+<div class="font-bold text-on-surface">The Grand Meridian</div>
+<div class="text-label-sm text-secondary">BF-44120</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[18px]">hotel</span>
+                    Hotel
+                  </div>
+</td>
+<td class="px-6 py-5">
+<div class="text-on-surface font-medium">Elena Vorski</div>
+<div class="text-label-sm text-secondary">management@meridian.com</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-label-sm px-2 py-1 bg-surface-container-highest text-secondary rounded uppercase tracking-wider text-[10px] font-bold">Premium</span>
+</td>
+<td class="px-6 py-5">
+<span class="status-badge bg-green-100 text-green-700">Active</span>
+</td>
+<td class="px-6 py-5 text-secondary">Nov 12, 2023</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-lg text-secondary hover:text-error transition-all">
+<span class="material-symbols-outlined">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Pending) -->
+<tr class="group hover:bg-surface-container-low/30 transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A modern artisanal bakery and cafe counter featuring fresh pastries and espresso equipment. The lighting is soft and focused, creating a high-contrast elegant atmosphere consistent with a technical SaaS dashboard aesthetic. The primary focus is on clean lines and professional hospitality presentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTvUN3pQHl3UlRsL44DeMJok3IfFeiMlw4MzhEyKV3_FVrWHcqKYD77kdTw8pYFDEy-STEyX9iMzoz229lPJ1sVppfWYTtsOl-10M0CVmDP3NT8zuW98SV3kDINiiLRBHPkCnjwm3xLINC3PAQITm3yqxSBRaNV2S_fTJ2jDruHwRsUarEUinBJkxNaaGTNeeTZdIX81E3CmycMsXuCdCVKcGhbO0qxwaeNszsowLqFALsIhP4o3Mcr-a4gS-48ie_3lXAQX8HGWs6"/>
+</div>
+<div>
+<div class="font-bold text-on-surface">Crust &amp; Crema</div>
+<div class="text-label-sm text-secondary">BF-88291</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined text-[18px]">local_cafe</span>
+                    Cafe
+                  </div>
+</td>
+<td class="px-6 py-5">
+<div class="text-on-surface font-medium">Marc Jacobs</div>
+<div class="text-label-sm text-secondary">mj@crema.io</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-label-sm px-2 py-1 bg-surface-container-highest text-secondary rounded uppercase tracking-wider text-[10px] font-bold">Basic</span>
+</td>
+<td class="px-6 py-5">
+<span class="status-badge bg-yellow-100 text-yellow-700">Pending</span>
+</td>
+<td class="px-6 py-5 text-secondary">Jan 05, 2024</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-red-50 rounded-lg text-secondary hover:text-error transition-all">
+<span class="material-symbols-outlined">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 (Suspended) -->
+<tr class="group hover:bg-surface-container-low/30 transition-colors opacity-75">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container flex-shrink-0 grayscale">
+<img class="w-full h-full object-cover" data-alt="A contemporary urban restaurant space with high ceilings and industrial chic elements. The lighting is dramatic and moody, reflecting a high-performance SaaS tool's depth. The image uses muted tones and sharp focus to convey a sense of professional oversight and detail-oriented management." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCw_C9yesHqbxYfoIfEMRXW-B1KylikDtGp7MQEeWgeO6e6BYyjEOZPE29WrpgVpmourqs493AVrhdTuyaQqi65xW0fZMuqJavYoQlz8faEeBMafsPMnAhg8lRL0CdQ2q1K4mgl3c1GNpdPEhdPbCzS_ciGmjXiWNykPW0r_4xud77fKyNM2D5OhfzNbk042FMSQ1J6VvWueeqcopOkAGKSfH9uxh0ka6OTdx3r-mlF8QFauoVAzfHfdxUQ1JLo7YCjD7naALvB0Fum"/>
+</div>
+<div>
+<div class="font-bold text-on-surface line-through decoration-secondary">Urban Oasis</div>
+<div class="text-label-sm text-secondary">BF-55612</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-5 text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">hotel</span>
+                    Hotel
+                  </div>
+</td>
+<td class="px-6 py-5">
+<div class="text-on-surface font-medium">Sarah Chen</div>
+<div class="text-label-sm text-secondary">sarah@oasis.com</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-label-sm px-2 py-1 bg-surface-container-highest text-secondary rounded uppercase tracking-wider text-[10px] font-bold">Premium</span>
+</td>
+<td class="px-6 py-5">
+<span class="status-badge bg-red-100 text-red-700">Suspended</span>
+</td>
+<td class="px-6 py-5 text-secondary">Dec 15, 2023</td>
+<td class="px-6 py-5 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-lg text-secondary hover:text-primary transition-all">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 hover:bg-green-50 rounded-lg text-secondary hover:text-green-600 transition-all" title="Activate">
+<span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 border border-outline-variant rounded-lg text-body-md hover:bg-surface-container transition-all flex items-center gap-1 disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+              Prev
+            </button>
+<button class="px-3 py-1 border border-outline-variant rounded-lg text-body-md hover:bg-surface-container transition-all flex items-center gap-1">
+              Next
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm text-secondary">Page</span>
+<input class="w-10 text-center py-1 border border-outline-variant rounded-lg text-body-md focus:ring-1 focus:ring-primary" type="text" value="1"/>
+<span class="text-label-sm text-secondary">of 22</span>
+</div>
+</div>
+</section>
+<!-- Empty State Preview (Subtle hint of design quality) -->
+<section class="mt-section-gap hidden">
+<div class="max-w-md mx-auto text-center py-16">
+<div class="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-[40px] text-secondary opacity-40">search_off</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">No businesses found</h3>
+<p class="text-secondary text-body-md mb-8">We couldn't find any results matching your current filters. Try adjusting your search criteria or clear all filters.</p>
+<button class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium">Clear Filters</button>
+</div>
+</section>
+</div>
+<!-- Stats Overview (Asymmetric Layout element) -->
+<div class="px-container-padding pb-container-padding">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="bg-white p-6 rounded-[24px] border border-outline-variant double-stack-shadow">
+<p class="text-label-sm text-secondary font-bold uppercase mb-2">Total Partners</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[32px] font-bold font-display-lg">256</span>
+<span class="text-green-600 font-label-sm flex items-center">+12%</span>
+</div>
+<div class="mt-4 h-1 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[70%]"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-[24px] border border-outline-variant double-stack-shadow">
+<p class="text-label-sm text-secondary font-bold uppercase mb-2">Plan Distribution</p>
+<div class="flex items-center gap-4">
+<div class="flex-1 space-y-2">
+<div class="flex justify-between text-label-sm"><span>Ent: 42%</span><span>Pre: 38%</span></div>
+<div class="h-2 w-full bg-surface-container rounded-full flex overflow-hidden">
+<div class="h-full bg-primary w-[42%]"></div>
+<div class="h-full bg-secondary w-[38%] border-l border-white"></div>
+<div class="h-full bg-outline-variant w-[20%] border-l border-white"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-[24px] border border-outline-variant double-stack-shadow">
+<p class="text-label-sm text-secondary font-bold uppercase mb-2">Onboarding Health</p>
+<div class="flex items-center gap-4">
+<span class="text-[32px] font-bold font-display-lg">94%</span>
+<span class="text-body-md text-secondary leading-tight">Average completion rate for new hotels this month.</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

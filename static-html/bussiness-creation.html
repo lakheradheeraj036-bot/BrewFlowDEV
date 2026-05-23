@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BrewFlow Registration | New Business Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@500;600;700;800&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f4f0ef",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ddd9d8",
+                        "primary": "#000000",
+                        "secondary-fixed": "#e2e3e1",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-container-highest": "#e5e2e1",
+                        "tertiary-fixed": "#e3e3dc",
+                        "on-primary-fixed": "#1c1b1b",
+                        "surface-container": "#f1edec",
+                        "on-tertiary-fixed": "#1a1c18",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "secondary": "#5d5f5d",
+                        "tertiary": "#000000",
+                        "surface": "#fdf8f8",
+                        "on-tertiary-fixed-variant": "#464742",
+                        "on-tertiary-container": "#83847e",
+                        "on-error": "#ffffff",
+                        "primary-container": "#1c1b1b",
+                        "outline": "#747878",
+                        "inverse-surface": "#313030",
+                        "on-secondary-fixed-variant": "#454746",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#5f5e5e",
+                        "secondary-container": "#e2e3e1",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#e5e2e1",
+                        "on-primary-container": "#858383",
+                        "on-background": "#1c1b1b",
+                        "outline-variant": "#c4c7c7",
+                        "surface-container-low": "#f7f3f2",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-secondary-container": "#636563",
+                        "tertiary-container": "#1a1c18",
+                        "tertiary-fixed-dim": "#c7c7c0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "32px",
+                        "section-gap": "48px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "label-sm": ["Geist"],
+                        "headline-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #F7F7F5;
+        }
+        .form-card {
+            box-shadow: 0px 10px 30px rgba(0,0,0, 0.04);
+            border: 1px solid #E8E8E1;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="w-[240px] h-screen fixed left-0 top-0 border-r border-outline-variant bg-surface-container-low flex flex-col p-4 transition-all duration-200 ease-in-out">
+<div class="mb-10 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">BrewFlow</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Super Admin</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-primary font-bold bg-secondary-container rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">storefront</span>
+<span>Cafes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">hotel</span>
+<span>Hotels</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>Plans</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">manage_accounts</span>
+<span>Roles</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Staff</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors rounded-lg font-body-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary font-body-md" href="#">
+<span class="material-symbols-outlined">description</span>
+<span>Docs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary font-body-md" href="#">
+<span class="material-symbols-outlined">help</span>
+<span>Help</span>
+</a>
+<div class="mt-4 px-3">
+<button class="w-full bg-primary text-on-primary py-2 rounded-lg font-label-sm uppercase tracking-wider hover:opacity-90 transition-opacity">
+                    Support
+                </button>
+</div>
+</div>
+</aside>
+<!-- Top Navigation -->
+<header class="sticky top-0 w-full z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center px-gutter h-16 ml-[240px] pr-[240px]">
+<div class="flex items-center gap-4 flex-grow">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary rounded-lg overflow-hidden border border-outline-variant">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant">search</span>
+<input class="w-full bg-transparent border-none pl-10 h-10 text-body-md focus:ring-0" placeholder="Search businesses..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-secondary hover:text-primary cursor-pointer transition-colors">
+<span class="font-body-md">Feedback</span>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer">help_outline</span>
+</div>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-6">
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQqtAb1D_SIkt1j0fFwR6HSFDKj-VSzeHuwVIybS8-8sqNgp8HHeLDvf1FCHDkVWJalB_KsAbHUIOpVQHQ8FHz7akAyWdzvLPZdwn7aq0uAito4tSD_fWjF0wNx817ogIB9nQMGRmYksCryTzBP47A57FnVa-FONqTT8J5u7RDnf0j27k6hHUXlS2p69xOz3C_PwxSnu7AblzgGyLOn7K-NftLf-kfs8DxYy5co86kw05odeYls9qwtsOqMvgirdC5twma1_PnzAZp"/>
+<span class="font-body-md font-medium">Admin</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] p-container-padding min-h-[calc(100vh-64px)]">
+<div class="max-w-5xl mx-auto">
+<!-- Header Section -->
+<div class="mb-section-gap">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">New Entity Registration</h2>
+<p class="font-body-lg text-secondary">Complete the onboarding form to register a new cafe or hotel into the BrewFlow ecosystem.</p>
+</div>
+<!-- Multi-step Form Content -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column: Progress & Identity -->
+<div class="col-span-12 lg:col-span-4">
+<div class="form-card bg-white p-card-padding rounded-[24px] sticky top-24">
+<div class="mb-8">
+<h3 class="font-headline-md text-headline-md mb-6">Onboarding Progress</h3>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold">1</div>
+<div>
+<p class="font-body-md font-bold">Business Profile</p>
+<p class="font-label-sm text-secondary">Basic information</p>
+</div>
+</div>
+<div class="flex items-center gap-4 opacity-50">
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center font-bold text-secondary">2</div>
+<div>
+<p class="font-body-md">Contact &amp; Location</p>
+<p class="font-label-sm text-secondary">Owner details &amp; Address</p>
+</div>
+</div>
+<div class="flex items-center gap-4 opacity-50">
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant flex items-center justify-center font-bold text-secondary">3</div>
+<div>
+<p class="font-body-md">Plan Selection</p>
+<p class="font-label-sm text-secondary">Subscription tier</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-4">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">info</span>
+<p class="font-label-sm font-bold text-primary uppercase">Why BrewFlow?</p>
+</div>
+<p class="font-body-md text-on-surface-variant">Your data is secured with enterprise-grade encryption. BrewFlow provides unified management for diverse hospitality assets.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: The Form -->
+<div class="col-span-12 lg:col-span-8">
+<form class="space-y- gutter">
+<!-- Step 1: Business Profile -->
+<div class="form-card bg-white p-[32px] rounded-[24px] mb-gutter">
+<h4 class="font-headline-md text-headline-md mb-6">Business Profile</h4>
+<div class="space-y-6">
+<!-- Type Toggle -->
+<div>
+<label class="font-label-sm text-label-sm text-secondary mb-3 block">ENTITY TYPE</label>
+<div class="flex p-1 bg-surface-container rounded-lg w-full max-w-[320px]">
+<button class="flex-1 py-2 px-4 rounded-md bg-white shadow-sm font-body-md font-bold text-primary flex items-center justify-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+                                            Cafe
+                                        </button>
+<button class="flex-1 py-2 px-4 rounded-md text-secondary hover:text-primary font-body-md flex items-center justify-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[20px]">hotel</span>
+                                            Hotel
+                                        </button>
+</div>
+</div>
+<!-- Business Name -->
+<div>
+<label class="font-label-sm text-label-sm text-secondary mb-2 block" for="business_name">BUSINESS NAME</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary font-body-md transition-all" id="business_name" placeholder="e.g. The Artisan Roast" type="text"/>
+</div>
+<!-- Logo Upload -->
+<div>
+<label class="font-label-sm text-label-sm text-secondary mb-2 block">BUSINESS LOGO</label>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-8 flex flex-col items-center justify-center bg-surface-container-lowest hover:border-primary transition-colors cursor-pointer group">
+<div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">upload_file</span>
+</div>
+<p class="font-body-md font-medium text-primary mb-1">Click to upload or drag and drop</p>
+<p class="font-label-sm text-secondary">PNG, JPG, or SVG (max. 5MB)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Step 2: Contact Details -->
+<div class="form-card bg-white p-[32px] rounded-[24px] mb-gutter">
+<h4 class="font-headline-md text-headline-md mb-6">Owner &amp; Contact Info</h4>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="col-span-2">
+<label class="font-label-sm text-label-sm text-secondary mb-2 block" for="owner_name">OWNER FULL NAME</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary font-body-md" id="owner_name" placeholder="John Doe" type="text"/>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-secondary mb-2 block" for="email">EMAIL ADDRESS</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary font-body-md" id="email" placeholder="owner@example.com" type="email"/>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-secondary mb-2 block" for="phone">PHONE NUMBER</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary font-body-md" id="phone" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="col-span-2">
+<label class="font-label-sm text-label-sm text-secondary mb-2 block" for="address">PHYSICAL ADDRESS</label>
+<textarea class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary font-body-md" id="address" placeholder="Enter the full street address..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Step 3: Subscription -->
+<div class="form-card bg-white p-[32px] rounded-[24px] mb-gutter">
+<h4 class="font-headline-md text-headline-md mb-6">Select Subscription Plan</h4>
+<div class="relative">
+<label class="font-label-sm text-label-sm text-secondary mb-2 block" for="plan">SUBSCRIPTION TIER</label>
+<select class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-primary font-body-md appearance-none bg-no-repeat bg-[right_1rem_center]" id="plan">
+<option value="essential">Essential - $49/mo (Up to 2 locations)</option>
+<option value="professional">Professional - $129/mo (Up to 10 locations)</option>
+<option value="enterprise">Enterprise - Custom Pricing (Unlimited)</option>
+</select>
+<span class="absolute right-4 bottom-3 material-symbols-outlined pointer-events-none text-secondary">expand_more</span>
+</div>
+<!-- Subscription Detail Cards (Visual Pattern) -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-4 border border-primary rounded-xl bg-surface-container flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-2">rocket_launch</span>
+<p class="font-label-sm font-bold text-primary mb-1">MOST POPULAR</p>
+<p class="font-body-md text-on-surface">Professional Tier</p>
+</div>
+<div class="p-4 border border-outline-variant rounded-xl opacity-60 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-2">speed</span>
+<p class="font-label-sm font-bold text-secondary mb-1">BASIC</p>
+<p class="font-body-md text-on-surface">Essential Tier</p>
+</div>
+<div class="p-4 border border-outline-variant rounded-xl opacity-60 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-2">hub</span>
+<p class="font-label-sm font-bold text-secondary mb-1">GLOBAL</p>
+<p class="font-body-md text-on-surface">Enterprise Tier</p>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex items-center justify-between pt-gutter">
+<button class="px-8 py-3 rounded-lg font-body-md font-bold text-secondary hover:bg-surface-container transition-colors" type="button">
+                                Save Draft
+                            </button>
+<div class="flex gap-4">
+<button class="px-8 py-3 rounded-lg font-body-md font-bold text-primary border border-primary hover:bg-surface-container transition-all" type="button">
+                                    Previous
+                                </button>
+<button class="px-10 py-3 rounded-lg font-body-md font-bold bg-primary text-on-primary shadow-lg hover:bg-opacity-90 transition-all flex items-center gap-2" type="submit">
+                                    Complete Registration
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+<!-- Footer Meta -->
+<footer class="mt-section-gap pb-12 text-center">
+<p class="font-label-sm text-secondary">BrewFlow Administration Console v4.2.0 • © 2024 BrewFlow Technologies Inc.</p>
+<div class="flex justify-center gap-6 mt-4">
+<a class="font-label-sm text-secondary hover:text-primary underline" href="#">Privacy Policy</a>
+<a class="font-label-sm text-secondary hover:text-primary underline" href="#">Terms of Service</a>
+</div>
+</footer>
+</div>
+</main>
+</body></html>

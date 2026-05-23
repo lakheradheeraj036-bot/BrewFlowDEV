@@ -1,0 +1,2048 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>BrewFlow Docs — Components & Extending</title>
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            :root {
+                --sidebar-bg: #0f172a;
+                --sidebar-border: #1e293b;
+                --sidebar-text: #94a3b8;
+                --accent: #f59e0b;
+                --content-bg: #f8fafc;
+                --card-bg: #ffffff;
+                --text: #1e293b;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --code-bg: #0f172a;
+                --code-text: #e2e8f0;
+                --green: #10b981;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                background: var(--content-bg);
+                color: var(--text);
+                display: flex;
+                min-height: 100vh;
+                font-size: 15px;
+                line-height: 1.6;
+            }
+            .sidebar {
+                width: 268px;
+                flex-shrink: 0;
+                background: var(--sidebar-bg);
+                border-right: 1px solid var(--sidebar-border);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                overflow-y: auto;
+                z-index: 100;
+                display: flex;
+                flex-direction: column;
+            }
+            .sidebar::-webkit-scrollbar {
+                width: 4px;
+            }
+            .sidebar::-webkit-scrollbar-thumb {
+                background: #334155;
+                border-radius: 4px;
+            }
+            .sidebar-logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 20px 20px 16px;
+                border-bottom: 1px solid var(--sidebar-border);
+                text-decoration: none;
+            }
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+                background: var(--accent);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .logo-icon svg {
+                width: 20px;
+                height: 20px;
+                color: #fff;
+            }
+            .logo-text {
+                font-size: 15px;
+                font-weight: 700;
+                color: #fff;
+                line-height: 1.2;
+            }
+            .logo-sub {
+                font-size: 11px;
+                color: #475569;
+            }
+            .sidebar-nav {
+                padding: 12px 0;
+                flex: 1;
+            }
+            .nav-group {
+                padding: 16px 20px 4px;
+            }
+            .nav-group-label {
+                font-size: 10px;
+                font-weight: 700;
+                color: #475569;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+            .nav-link {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 7px 20px;
+                font-size: 13px;
+                color: var(--sidebar-text);
+                text-decoration: none;
+                transition: all 0.15s;
+                border-left: 2px solid transparent;
+            }
+            .nav-link:hover {
+                color: #e2e8f0;
+                background: rgba(255, 255, 255, 0.03);
+            }
+            .nav-link.active {
+                color: var(--accent);
+                border-left-color: var(--accent);
+                background: rgba(245, 158, 11, 0.06);
+            }
+            .nav-link .dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: currentColor;
+                flex-shrink: 0;
+                opacity: 0.6;
+            }
+            .sidebar-footer {
+                padding: 16px 20px;
+                border-top: 1px solid var(--sidebar-border);
+            }
+            .sidebar-footer a {
+                font-size: 12px;
+                color: #475569;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .sidebar-footer a:hover {
+                color: var(--accent);
+            }
+            .content {
+                margin-left: 268px;
+                flex: 1;
+                min-width: 0;
+            }
+            .page-hero {
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                padding: 56px 60px 48px;
+                border-bottom: 1px solid var(--border);
+            }
+            .hero-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: rgba(245, 158, 11, 0.15);
+                border: 1px solid rgba(245, 158, 11, 0.3);
+                color: var(--accent);
+                font-size: 12px;
+                font-weight: 600;
+                padding: 4px 12px;
+                border-radius: 20px;
+                margin-bottom: 16px;
+            }
+            .hero-title {
+                font-size: 36px;
+                font-weight: 800;
+                color: #fff;
+                letter-spacing: -0.02em;
+                margin-bottom: 10px;
+            }
+            .hero-title span {
+                color: var(--accent);
+            }
+            .hero-subtitle {
+                font-size: 16px;
+                color: #94a3b8;
+                max-width: 520px;
+            }
+            .main {
+                padding: 0 60px 80px;
+                max-width: 900px;
+            }
+            .section {
+                padding-top: 56px;
+            }
+            .section-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 28px;
+            }
+            .section-number {
+                width: 32px;
+                height: 32px;
+                background: var(--accent);
+                color: #fff;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 800;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .section-title {
+                font-size: 22px;
+                font-weight: 700;
+                color: var(--text);
+            }
+            .section-divider {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 48px 0 0;
+            }
+            h3 {
+                font-size: 17px;
+                font-weight: 700;
+                color: var(--text);
+                margin: 32px 0 12px;
+            }
+            p {
+                color: var(--text-muted);
+                margin-bottom: 14px;
+            }
+            .callout {
+                display: flex;
+                gap: 12px;
+                padding: 14px 16px;
+                border-radius: 10px;
+                margin: 20px 0;
+                font-size: 14px;
+            }
+            .callout-icon {
+                width: 18px;
+                height: 18px;
+                flex-shrink: 0;
+                margin-top: 1px;
+            }
+            .callout.amber {
+                background: #fffbeb;
+                border: 1px solid #fde68a;
+                color: #92400e;
+            }
+            .callout.blue {
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                color: #1e40af;
+            }
+            .callout.green {
+                background: #f0fdf4;
+                border: 1px solid #bbf7d0;
+                color: #166534;
+            }
+            .callout-title {
+                font-weight: 700;
+                margin-bottom: 3px;
+            }
+            .callout p {
+                margin: 0;
+                color: inherit;
+            }
+            .code-block {
+                background: var(--code-bg);
+                border-radius: 10px;
+                overflow: hidden;
+                margin: 16px 0;
+                border: 1px solid #1e293b;
+            }
+            .code-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 16px;
+                background: #1e293b;
+                border-bottom: 1px solid #334155;
+            }
+            .code-lang {
+                font-size: 11px;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+            }
+            .code-file {
+                font-size: 11px;
+                color: var(--accent);
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+            }
+            .code-block pre {
+                padding: 18px 20px;
+                overflow-x: auto;
+            }
+            .code-block code {
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                font-size: 13px;
+                line-height: 1.7;
+                color: var(--code-text);
+            }
+            .hl-key {
+                color: #c084fc;
+            }
+            .hl-str {
+                color: #86efac;
+            }
+            .hl-cmt {
+                color: #475569;
+                font-style: italic;
+            }
+            .hl-fn {
+                color: #60a5fa;
+            }
+            .hl-cls {
+                color: #f59e0b;
+            }
+            .hl-num {
+                color: #fb923c;
+            }
+            .hl-attr {
+                color: #7dd3fc;
+            }
+            code {
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                font-size: 12.5px;
+                background: #f1f5f9;
+                color: #c026d3;
+                padding: 2px 6px;
+                border-radius: 5px;
+                border: 1px solid #e2e8f0;
+            }
+            .code-block code {
+                background: none;
+                color: inherit;
+                padding: 0;
+                border: none;
+                font-size: 13px;
+            }
+            .doc-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 16px 0;
+                font-size: 13.5px;
+            }
+            .doc-table th {
+                background: #f1f5f9;
+                color: var(--text);
+                font-weight: 700;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                padding: 10px 14px;
+                text-align: left;
+                border-bottom: 2px solid var(--border);
+            }
+            .doc-table td {
+                padding: 10px 14px;
+                border-bottom: 1px solid var(--border);
+                color: var(--text-muted);
+                vertical-align: top;
+            }
+            .doc-table tr:last-child td {
+                border-bottom: none;
+            }
+            .doc-table tr:hover td {
+                background: #f8fafc;
+            }
+            .doc-table td:first-child {
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                color: var(--text);
+                font-size: 12px;
+            }
+
+            /* Component Cards */
+            .comp-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                margin: 24px 0;
+                overflow: hidden;
+            }
+            .comp-card-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 20px;
+                background: #f8fafc;
+                border-bottom: 1px solid var(--border);
+            }
+            .comp-name {
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                font-size: 14px;
+                font-weight: 700;
+                color: var(--text);
+            }
+            .comp-file {
+                font-size: 11px;
+                color: var(--text-muted);
+                background: #f1f5f9;
+                padding: 3px 8px;
+                border-radius: 6px;
+            }
+            .comp-body {
+                padding: 18px 20px;
+            }
+            .prop-grid {
+                display: grid;
+                grid-template-columns: 140px 1fr;
+                gap: 0;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                overflow: hidden;
+                margin: 12px 0;
+            }
+            .prop-row {
+                display: contents;
+            }
+            .prop-row:not(:last-child) .prop-key,
+            .prop-row:not(:last-child) .prop-val {
+                border-bottom: 1px solid var(--border);
+            }
+            .prop-key {
+                padding: 9px 12px;
+                background: #f8fafc;
+                font-family: "Menlo", "Monaco", "Courier New", monospace;
+                font-size: 12px;
+                color: #c026d3;
+                font-weight: 600;
+            }
+            .prop-val {
+                padding: 9px 12px;
+                font-size: 13px;
+                color: var(--text-muted);
+            }
+            .prop-req {
+                color: #ef4444;
+                font-size: 10px;
+                font-weight: 700;
+                margin-left: 4px;
+            }
+
+            /* Step cards for extending */
+            .step-card {
+                display: flex;
+                gap: 16px;
+                margin: 16px 0;
+            }
+            .step-num {
+                width: 28px;
+                height: 28px;
+                background: var(--accent);
+                color: #fff;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 800;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+            .step-body {
+                flex: 1;
+            }
+            .step-title {
+                font-weight: 700;
+                color: var(--text);
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+            .step-desc {
+                font-size: 13px;
+                color: var(--text-muted);
+                line-height: 1.6;
+            }
+
+            /* Pattern cards */
+            .pattern-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                margin: 16px 0;
+            }
+            .pattern-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 16px 18px;
+            }
+            .pattern-title {
+                font-weight: 700;
+                color: var(--text);
+                font-size: 13px;
+                margin-bottom: 6px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .pattern-title .badge {
+                background: var(--accent);
+                color: #fff;
+                font-size: 10px;
+                padding: 1px 7px;
+                border-radius: 10px;
+            }
+            .pattern-desc {
+                font-size: 12.5px;
+                color: var(--text-muted);
+                margin: 0;
+            }
+
+            @media (max-width: 700px) {
+                .pattern-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+            @media (max-width: 900px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                    transition: transform 0.3s;
+                }
+                .sidebar.open {
+                    transform: translateX(0);
+                }
+                .content {
+                    margin-left: 0;
+                }
+                .page-hero,
+                .main {
+                    padding-left: 24px;
+                    padding-right: 24px;
+                }
+                .mobile-toggle {
+                    display: flex !important;
+                }
+            }
+            .mobile-toggle {
+                display: none;
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                z-index: 200;
+                width: 48px;
+                height: 48px;
+                background: var(--accent);
+                border-radius: 50%;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                cursor: pointer;
+                border: none;
+            }
+            .mobile-toggle svg {
+                width: 22px;
+                height: 22px;
+                color: #fff;
+            }
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <aside class="sidebar" id="sidebar">
+            <a href="index.html" class="sidebar-logo">
+                <div class="logo-icon">
+                    <svg
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"
+                        />
+                    </svg>
+                </div>
+                <div>
+                    <div class="logo-text">BrewFlow</div>
+                    <div class="logo-sub">Developer Docs</div>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <span class="nav-group-label">← Part 1</span>
+                </div>
+                <a href="index.html" class="nav-link"
+                    ><span class="dot"></span> Architecture & Auth</a
+                >
+                <a href="index.html#database" class="nav-link"
+                    ><span class="dot"></span> Database Schema</a
+                >
+                <a href="index.html#roles" class="nav-link"
+                    ><span class="dot"></span> Roles & Permissions</a
+                >
+
+                <div class="nav-group">
+                    <span class="nav-group-label">Livewire Components</span>
+                </div>
+                <a href="#livewire" class="nav-link active"
+                    ><span class="dot"></span> Overview</a
+                >
+                <a href="#dashboard" class="nav-link"
+                    ><span class="dot"></span> DashboardPage</a
+                >
+                <a href="#business-listing" class="nav-link"
+                    ><span class="dot"></span> BusinessListing</a
+                >
+                <a href="#business-creation" class="nav-link"
+                    ><span class="dot"></span> BusinessCreation</a
+                >
+                <a href="#staff" class="nav-link"
+                    ><span class="dot"></span> StaffManagement</a
+                >
+                <a href="#roles-comp" class="nav-link"
+                    ><span class="dot"></span> RolesPermissions</a
+                >
+                <a href="#settings" class="nav-link"
+                    ><span class="dot"></span> PlatformSettings</a
+                >
+
+                <div class="nav-group">
+                    <span class="nav-group-label">UI Components</span>
+                </div>
+                <a href="#ui-components" class="nav-link"
+                    ><span class="dot"></span> All Components</a
+                >
+
+                <div class="nav-group">
+                    <span class="nav-group-label">Patterns & Guide</span>
+                </div>
+                <a href="#patterns" class="nav-link"
+                    ><span class="dot"></span> Common Patterns</a
+                >
+                <a href="#extending" class="nav-link"
+                    ><span class="dot"></span> Adding a New Page</a
+                >
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html"
+                    ><svg
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 19l-7-7 7-7"
+                        />
+                    </svg>
+                    Back to Part 1</a
+                >
+            </div>
+        </aside>
+
+        <button class="mobile-toggle" id="mobileToggle">
+            <svg
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                />
+            </svg>
+        </button>
+
+        <div class="content">
+            <div class="page-hero">
+                <div class="hero-badge">Part 2 of 2</div>
+                <h1 class="hero-title">
+                    Components <span>&amp; Extending</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Every Livewire component and UI component explained — plus a
+                    step-by-step guide to adding new features.
+                </p>
+            </div>
+
+            <div class="main">
+                <!-- ══════════════════════════════════ -->
+                <!-- LIVEWIRE OVERVIEW                  -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="livewire">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <h2 class="section-title">
+                            Livewire Components — Overview
+                        </h2>
+                    </div>
+                    <p>
+                        Every Livewire page is made of exactly
+                        <strong>two files</strong> that always live side by
+                        side:
+                    </p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">structure</span
+                            ><span class="code-file"
+                                >The two-file Livewire pattern</span
+                            >
+                        </div>
+                        <pre><code><span class="hl-cmt">// 1. PHP Class — the LOGIC (state, methods, queries)</span>
+<span class="hl-cls">app/Livewire/SuperAdmin/Dashboard/DashboardPage</span>.php
+
+<span class="hl-cmt">// 2. Blade View — the HTML (reads from the PHP class)</span>
+<span class="hl-cls">resources/views/livewire/super-admin/dashboard/dashboard-page</span>.blade.php</code></pre>
+                    </div>
+
+                    <p>Key attributes used on every Livewire page component:</p>
+                    <table class="doc-table">
+                        <thead>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Where</th>
+                                <th>What it does</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#[Layout(...)]</td>
+                                <td>PHP class</td>
+                                <td>
+                                    Wraps the component in a layout shell
+                                    (sidebar + header)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#[Title(...)]</td>
+                                <td>PHP class</td>
+                                <td>
+                                    Sets the HTML &lt;title&gt; and the header
+                                    title prop
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#[Url]</td>
+                                <td>PHP property</td>
+                                <td>
+                                    Syncs property to URL query string (survives
+                                    refresh/share)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#[Validate(...)]</td>
+                                <td>PHP property</td>
+                                <td>
+                                    Validation rule attached directly to a
+                                    property
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- DASHBOARD                          -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="dashboard">
+                    <div class="section-header">
+                        <div class="section-number">2</div>
+                        <h2 class="section-title">DashboardPage</h2>
+                    </div>
+
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">DashboardPage</span>
+                            <span class="comp-file"
+                                >app/Livewire/SuperAdmin/Dashboard/DashboardPage.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <p>
+                                The main landing page after login. Uses
+                                <strong>computed properties</strong> —
+                                properties prefixed with <code>get</code> and
+                                suffixed with <code>Property</code> that are
+                                lazily evaluated and cached per request.
+                            </p>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span>
+                                </div>
+                                <pre><code><span class="hl-cmt">// Computed property — called as $this->stats in PHP, $stats in Blade</span>
+<span class="hl-key">public function</span> <span class="hl-fn">getStatsProperty</span>(): <span class="hl-cls">array</span>
+{
+    <span class="hl-key">return</span> [
+        <span class="hl-str">'total_businesses'</span>   => <span class="hl-cls">Business</span>::<span class="hl-fn">count</span>(),
+        <span class="hl-str">'active_businesses'</span>  => <span class="hl-cls">Business</span>::<span class="hl-fn">where</span>(<span class="hl-str">'status'</span>, <span class="hl-str">'active'</span>)-><span class="hl-fn">count</span>(),
+        <span class="hl-str">'total_staff'</span>        => <span class="hl-cls">User</span>::<span class="hl-fn">whereHas</span>(<span class="hl-str">'roles'</span>, ...)-><span class="hl-fn">count</span>(),
+        <span class="hl-str">'pending_businesses'</span> => <span class="hl-cls">Business</span>::<span class="hl-fn">where</span>(<span class="hl-str">'status'</span>, <span class="hl-str">'pending'</span>)-><span class="hl-fn">count</span>(),
+    ];
+}
+
+<span class="hl-cmt">// In render(), pass to Blade view as variables</span>
+<span class="hl-key">public function</span> <span class="hl-fn">render</span>()
+{
+    <span class="hl-key">return</span> <span class="hl-fn">view</span>(<span class="hl-str">'livewire.super-admin.dashboard.dashboard-page'</span>, [
+        <span class="hl-str">'stats'</span>             => <span class="hl-key">$this</span>->stats,
+        <span class="hl-str">'recentBusinesses'</span>  => <span class="hl-key">$this</span>->recentBusinesses,
+        <span class="hl-str">'businessTypeStats'</span> => <span class="hl-key">$this</span>->businessTypeStats,
+    ]);
+}</code></pre>
+                            </div>
+
+                            <p>
+                                <strong>View file</strong>
+                                <code>dashboard-page.blade.php</code> renders:
+                            </p>
+                            <ul
+                                style="
+                                    color: var(--text-muted);
+                                    font-size: 13.5px;
+                                    padding-left: 20px;
+                                    line-height: 2.2;
+                                "
+                            >
+                                <li>
+                                    4-column stats grid using
+                                    <code>&lt;x-ui.stats-card&gt;</code>
+                                </li>
+                                <li>
+                                    Recent businesses table using
+                                    <code>&lt;x-ui.card&gt;</code> +
+                                    <code>&lt;x-ui.table&gt;</code>
+                                </li>
+                                <li>
+                                    Business type distribution with progress
+                                    bars + emoji icons
+                                </li>
+                                <li>
+                                    Quick Actions panel linking to other pages
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- BUSINESS LISTING                   -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="business-listing">
+                    <div class="section-header">
+                        <div class="section-number">3</div>
+                        <h2 class="section-title">BusinessListing</h2>
+                    </div>
+
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">BusinessListing</span>
+                            <span class="comp-file"
+                                >app/Livewire/SuperAdmin/Businesses/BusinessListing.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <p>
+                                Paginated, searchable, filterable, and sortable
+                                business table with inline status changes and
+                                delete confirmation.
+                            </p>
+
+                            <h3 style="margin-top: 16px">Public Properties</h3>
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        $search<span class="prop-req"
+                                            >#[Url]</span
+                                        >
+                                    </div>
+                                    <div class="prop-val">
+                                        Synced to <code>?q=</code> in URL.
+                                        Searches name, email, city. Debounced
+                                        300ms in view.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        $statusFilter<span class="prop-req"
+                                            >#[Url]</span
+                                        >
+                                    </div>
+                                    <div class="prop-val">
+                                        Synced to <code>?statusFilter=</code>.
+                                        Filters by active | inactive | pending |
+                                        suspended.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        $typeFilter<span class="prop-req"
+                                            >#[Url]</span
+                                        >
+                                    </div>
+                                    <div class="prop-val">
+                                        Synced to <code>?typeFilter=</code>.
+                                        Filters by cafe | hotel | restaurant |
+                                        bar | other.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">$sortBy</div>
+                                    <div class="prop-val">
+                                        Column to sort by. Default:
+                                        <code>created_at</code>.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">$sortDir</div>
+                                    <div class="prop-val">
+                                        Sort direction. Default:
+                                        <code>desc</code>. Toggles asc↔desc on
+                                        repeated click.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">$showDeleteModal</div>
+                                    <div class="prop-val">
+                                        Controls delete confirmation modal
+                                        visibility.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        $deletingId / $deletingName
+                                    </div>
+                                    <div class="prop-val">
+                                        Stores which business is being deleted
+                                        (shown in modal text).
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3>Key Methods</h3>
+                            <table class="doc-table">
+                                <thead>
+                                    <tr>
+                                        <th>Method</th>
+                                        <th>What it does</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>sort($column)</td>
+                                        <td>
+                                            Toggles sortDir if same column,
+                                            otherwise sets new column + asc
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>confirmDelete($id)</td>
+                                        <td>
+                                            Loads business name, sets
+                                            deletingId, shows modal
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>deleteBusiness()</td>
+                                        <td>
+                                            SoftDeletes the business, hides
+                                            modal, flashes success
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>updateStatus($id, $status)</td>
+                                        <td>
+                                            Inline status update — triggered by
+                                            Alpine dropdown in table row
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>updatedSearch()</td>
+                                        <td>
+                                            Lifecycle hook → resets pagination
+                                            to page 1 on filter change
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="callout blue">
+                                <svg
+                                    class="callout-icon"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
+                                </svg>
+                                <div>
+                                    <div class="callout-title">
+                                        Why #[Url] on filters?
+                                    </div>
+                                    <p>
+                                        URL-synced filters mean users can
+                                        bookmark a filtered view, share the URL,
+                                        or refresh without losing their place.
+                                        The URL shows
+                                        <code
+                                            >?q=cafe&amp;statusFilter=active</code
+                                        >
+                                        automatically.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- BUSINESS CREATION                  -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="business-creation">
+                    <div class="section-header">
+                        <div class="section-number">4</div>
+                        <h2 class="section-title">BusinessCreation</h2>
+                    </div>
+
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">BusinessCreation</span>
+                            <span class="comp-file"
+                                >app/Livewire/SuperAdmin/Businesses/BusinessCreation.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <p>
+                                Multi-section creation form. Validation rules
+                                live directly on the properties using
+                                <code>#[Validate]</code> (Livewire 4 syntax —
+                                NOT the old <code>#[Rule]</code>).
+                            </p>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span
+                                    ><span class="code-file"
+                                        >Validation on properties (Livewire 4
+                                        pattern)</span
+                                    >
+                                </div>
+                                <pre><code><span class="hl-attr">#[Validate</span>(<span class="hl-str">'required|min:2|max:100'</span>)<span class="hl-attr">]</span>
+<span class="hl-key">public string</span> <span class="hl-key">$name</span> = <span class="hl-str">''</span>;
+
+<span class="hl-attr">#[Validate</span>(<span class="hl-str">'required|in:cafe,hotel,restaurant,bar,other'</span>)<span class="hl-attr">]</span>
+<span class="hl-key">public string</span> <span class="hl-key">$type</span> = <span class="hl-str">'cafe'</span>;
+
+<span class="hl-attr">#[Validate</span>(<span class="hl-str">'nullable|email|max:100'</span>)<span class="hl-attr">]</span>
+<span class="hl-key">public string</span> <span class="hl-key">$email</span> = <span class="hl-str">''</span>;</code></pre>
+                            </div>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span
+                                    ><span class="code-file"
+                                        >Save method with SPA redirect</span
+                                    >
+                                </div>
+                                <pre><code><span class="hl-key">public function</span> <span class="hl-fn">save</span>(): <span class="hl-cls">void</span>
+{
+    <span class="hl-key">$this</span>-><span class="hl-fn">validate</span>(); <span class="hl-cmt">// Validates all #[Validate] properties at once</span>
+
+    <span class="hl-cls">Business</span>::<span class="hl-fn">create</span>([...]);
+
+    <span class="hl-fn">session</span>()-><span class="hl-fn">flash</span>(<span class="hl-str">'success'</span>, <span class="hl-str">'Business created successfully.'</span>);
+
+    <span class="hl-cmt">// navigate: true = SPA navigation (no full page reload)</span>
+    <span class="hl-key">$this</span>-><span class="hl-fn">redirect</span>(<span class="hl-fn">route</span>(<span class="hl-str">'super-admin.businesses.index'</span>), navigate: <span class="hl-key">true</span>);
+}</code></pre>
+                            </div>
+
+                            <p>
+                                The view uses three
+                                <code>&lt;x-ui.card&gt;</code> sections:
+                                <strong>Business Info</strong>,
+                                <strong>Contact Details</strong>, and
+                                <strong>Subscription</strong>. The subscription
+                                section uses CSS <code>peer</code> pattern for
+                                radio card buttons.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- STAFF MANAGEMENT                   -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="staff">
+                    <div class="section-header">
+                        <div class="section-number">5</div>
+                        <h2 class="section-title">StaffManagement</h2>
+                    </div>
+
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">StaffManagement</span>
+                            <span class="comp-file"
+                                >app/Livewire/SuperAdmin/Staff/StaffManagement.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <p>
+                                Staff table with create modal, delete confirm
+                                modal, role filter, status toggle. Protects
+                                super admin accounts from modification.
+                            </p>
+
+                            <h3 style="margin-top: 16px">Create Staff Flow</h3>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span>
+                                </div>
+                                <pre><code><span class="hl-cmt">// Form fields prefixed with "new" to avoid naming collision</span>
+<span class="hl-key">public string</span> <span class="hl-key">$newName</span>       = <span class="hl-str">''</span>;
+<span class="hl-key">public string</span> <span class="hl-key">$newEmail</span>      = <span class="hl-str">''</span>;
+<span class="hl-key">public string</span> <span class="hl-key">$newPassword</span>   = <span class="hl-str">''</span>;
+<span class="hl-key">public string</span> <span class="hl-key">$newRole</span>       = <span class="hl-str">'staff'</span>;
+<span class="hl-key">public ?int</span>   <span class="hl-key">$newBusinessId</span> = <span class="hl-key">null</span>;
+
+<span class="hl-key">public function</span> <span class="hl-fn">openCreateModal</span>(): <span class="hl-cls">void</span>
+{
+    <span class="hl-cmt">// resetExcept keeps filter state, clears form fields</span>
+    <span class="hl-key">$this</span>-><span class="hl-fn">resetExcept</span>([<span class="hl-str">'search'</span>, <span class="hl-str">'roleFilter'</span>, <span class="hl-str">'statusFilter'</span>]);
+    <span class="hl-key">$this</span>->showCreateModal = <span class="hl-key">true</span>;
+}
+
+<span class="hl-key">public function</span> <span class="hl-fn">createStaff</span>(): <span class="hl-cls">void</span>
+{
+    <span class="hl-key">$this</span>-><span class="hl-fn">validate</span>();
+
+    <span class="hl-key">$user</span> = <span class="hl-cls">User</span>::<span class="hl-fn">create</span>([
+        <span class="hl-str">'name'</span>        => <span class="hl-key">$this</span>->newName,
+        <span class="hl-str">'email'</span>       => <span class="hl-key">$this</span>->newEmail,
+        <span class="hl-str">'password'</span>    => <span class="hl-cls">Hash</span>::<span class="hl-fn">make</span>(<span class="hl-key">$this</span>->newPassword),
+        <span class="hl-str">'business_id'</span> => <span class="hl-key">$this</span>->newBusinessId ?: <span class="hl-key">null</span>,
+        <span class="hl-str">'status'</span>      => <span class="hl-str">'active'</span>,
+    ]);
+    <span class="hl-key">$user</span>-><span class="hl-fn">assignRole</span>(<span class="hl-key">$this</span>->newRole); <span class="hl-cmt">// Spatie role assignment</span>
+    ...
+}</code></pre>
+                            </div>
+
+                            <div class="callout amber">
+                                <svg
+                                    class="callout-icon"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                    />
+                                </svg>
+                                <div>
+                                    <div class="callout-title">
+                                        Super Admin Protection
+                                    </div>
+                                    <p>
+                                        <code>confirmDelete()</code> and
+                                        <code>toggleStatus()</code> both check
+                                        <code>!$user->isSuperAdmin()</code>
+                                        before proceeding. Super admin accounts
+                                        show "Protected" instead of action
+                                        buttons in the UI.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- ROLES PERMISSIONS                  -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="roles-comp">
+                    <div class="section-header">
+                        <div class="section-number">6</div>
+                        <h2 class="section-title">RolesPermissions</h2>
+                    </div>
+
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">RolesPermissions</span>
+                            <span class="comp-file"
+                                >app/Livewire/SuperAdmin/Roles/RolesPermissions.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <p>
+                                Two-panel layout: role list on the left,
+                                permission toggle grid on the right. Clicking a
+                                permission checkbox calls the server immediately
+                                (no save button needed).
+                            </p>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span>
+                                </div>
+                                <pre><code><span class="hl-cmt">// Permissions grouped by prefix in render()</span>
+<span class="hl-key">$permissions</span> = <span class="hl-cls">Permission</span>::<span class="hl-fn">orderBy</span>(<span class="hl-str">'name'</span>)-><span class="hl-fn">get</span>()-><span class="hl-fn">groupBy</span>(<span class="hl-key">function</span> (<span class="hl-key">$p</span>) {
+    <span class="hl-key">return</span> <span class="hl-fn">explode</span>(<span class="hl-str">'.'</span>, <span class="hl-key">$p</span>->name)[<span class="hl-num">0</span>]; <span class="hl-cmt">// 'business.view' → 'business'</span>
+});
+
+<span class="hl-cmt">// Toggle a permission on/off</span>
+<span class="hl-key">public function</span> <span class="hl-fn">togglePermission</span>(<span class="hl-key">int</span> <span class="hl-key">$roleId</span>, <span class="hl-key">string</span> <span class="hl-key">$permissionName</span>): <span class="hl-cls">void</span>
+{
+    <span class="hl-key">$role</span> = <span class="hl-cls">Role</span>::<span class="hl-fn">findOrFail</span>(<span class="hl-key">$roleId</span>);
+
+    <span class="hl-key">if</span> (<span class="hl-key">$role</span>->name === <span class="hl-str">'super_admin'</span>) {
+        <span class="hl-fn">session</span>()-><span class="hl-fn">flash</span>(<span class="hl-str">'error'</span>, <span class="hl-str">'Super Admin cannot be modified.'</span>);
+        <span class="hl-key">return</span>;
+    }
+
+    <span class="hl-key">if</span> (<span class="hl-key">$role</span>-><span class="hl-fn">hasPermissionTo</span>(<span class="hl-key">$permissionName</span>)) {
+        <span class="hl-key">$role</span>-><span class="hl-fn">revokePermissionTo</span>(<span class="hl-key">$permissionName</span>);
+    } <span class="hl-key">else</span> {
+        <span class="hl-key">$role</span>-><span class="hl-fn">givePermissionTo</span>(<span class="hl-key">$permissionName</span>);
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- PLATFORM SETTINGS                  -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="settings">
+                    <div class="section-header">
+                        <div class="section-number">7</div>
+                        <h2 class="section-title">PlatformSettings</h2>
+                    </div>
+
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">PlatformSettings</span>
+                            <span class="comp-file"
+                                >app/Livewire/SuperAdmin/Settings/PlatformSettings.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <p>
+                                Tabbed settings panel with 4 tabs: General,
+                                Features, Billing, Security. Uses
+                                <code>PlatformSetting</code> model's static
+                                helpers to read/write a key-value database
+                                table.
+                            </p>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span
+                                    ><span class="code-file"
+                                        >mount() — reads from DB into
+                                        properties</span
+                                    >
+                                </div>
+                                <pre><code><span class="hl-key">public function</span> <span class="hl-fn">mount</span>(): <span class="hl-cls">void</span>
+{
+    <span class="hl-cmt">// PlatformSetting::get('key', 'default') reads from platform_settings table</span>
+    <span class="hl-key">$this</span>->platformName  = <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">get</span>(<span class="hl-str">'platform_name'</span>, <span class="hl-str">'BrewFlow'</span>);
+    <span class="hl-key">$this</span>->platformEmail = <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">get</span>(<span class="hl-str">'platform_email'</span>, <span class="hl-str">'admin@brewflow.com'</span>);
+    <span class="hl-key">$this</span>->enableRegistration = (<span class="hl-key">bool</span>) <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">get</span>(<span class="hl-str">'enable_registration'</span>, <span class="hl-key">true</span>);
+    <span class="hl-cmt">// ...and so on for all settings</span>
+}</code></pre>
+                            </div>
+
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">php</span
+                                    ><span class="code-file"
+                                        >saveFeatures() — feature toggle
+                                        pattern</span
+                                    >
+                                </div>
+                                <pre><code><span class="hl-key">public function</span> <span class="hl-fn">saveFeatures</span>(): <span class="hl-cls">void</span>
+{
+    <span class="hl-cmt">// Booleans stored as '1'/'0' strings in DB, cast back on read</span>
+    <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">set</span>(<span class="hl-str">'enable_registration'</span>, <span class="hl-key">$this</span>->enableRegistration ? <span class="hl-str">'1'</span> : <span class="hl-str">'0'</span>, <span class="hl-str">'features'</span>, <span class="hl-str">'boolean'</span>);
+    <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">set</span>(<span class="hl-str">'maintenance_mode'</span>,    <span class="hl-key">$this</span>->maintenanceMode ? <span class="hl-str">'1'</span> : <span class="hl-str">'0'</span>, <span class="hl-str">'features'</span>, <span class="hl-str">'boolean'</span>);
+
+    <span class="hl-fn">session</span>()-><span class="hl-fn">flash</span>(<span class="hl-str">'success'</span>, <span class="hl-str">'Feature settings saved.'</span>);
+}
+
+<span class="hl-cmt">// In view, toggle uses wire:click="$toggle('propertyName')"</span>
+<span class="hl-cmt">// &lt;button wire:click="$toggle('enableRegistration')"&gt;</span></code></pre>
+                            </div>
+
+                            <p>
+                                The <code>$activeTab</code> property controls
+                                which section panel is shown. Tab buttons use
+                                <code
+                                    >wire:click="$set('activeTab',
+                                    'general')"</code
+                                >.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- UI COMPONENTS                      -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="ui-components">
+                    <div class="section-header">
+                        <div class="section-number">8</div>
+                        <h2 class="section-title">UI Component Reference</h2>
+                    </div>
+                    <p>
+                        All components live in
+                        <code>resources/views/components/ui/</code> and are
+                        called with <code>&lt;x-ui.component-name&gt;</code>.
+                    </p>
+
+                    <!-- stats-card -->
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name"
+                                >&lt;x-ui.stats-card&gt;</span
+                            ><span class="comp-file"
+                                >ui/stats-card.blade.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        label<span class="prop-req">*</span>
+                                    </div>
+                                    <div class="prop-val">
+                                        Caption text below the number (e.g.
+                                        "Total Businesses")
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        value<span class="prop-req">*</span>
+                                    </div>
+                                    <div class="prop-val">
+                                        The big number displayed. Use
+                                        <code>:value="$count"</code> for dynamic
+                                        values.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">color</div>
+                                    <div class="prop-val">
+                                        amber (default) | blue | green | red |
+                                        purple
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">trend</div>
+                                    <div class="prop-val">
+                                        Text shown below value (e.g. "+12%" or
+                                        "3 new")
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">:trendUp</div>
+                                    <div class="prop-val">
+                                        true = green up arrow | false = red down
+                                        arrow
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        #icon (slot)<span class="prop-req"
+                                            >*</span
+                                        >
+                                    </div>
+                                    <div class="prop-val">
+                                        SVG icon rendered inside the colored
+                                        square. Use
+                                        <code>class="w-6 h-6 text-white"</code>.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">blade</span>
+                                </div>
+                                <pre><code>&lt;<span class="hl-attr">x-ui.stats-card</span>
+    <span class="hl-attr">label</span>=<span class="hl-str">"Total Businesses"</span>
+    :<span class="hl-attr">value</span>=<span class="hl-str">"$stats['total_businesses']"</span>
+    <span class="hl-attr">color</span>=<span class="hl-str">"amber"</span>
+    <span class="hl-attr">trend</span>=<span class="hl-str">"+12%"</span>
+    :<span class="hl-attr">trendUp</span>=<span class="hl-str">"true"</span>
+&gt;
+    &lt;<span class="hl-attr">x-slot:icon</span>&gt;&lt;<span class="hl-attr">svg</span> <span class="hl-attr">class</span>=<span class="hl-str">"w-6 h-6 text-white"</span>&gt;...&lt;/<span class="hl-attr">svg</span>&gt;&lt;/<span class="hl-attr">x-slot:icon</span>&gt;
+&lt;/<span class="hl-attr">x-ui.stats-card</span>&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- card -->
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">&lt;x-ui.card&gt;</span
+                            ><span class="comp-file">ui/card.blade.php</span>
+                        </div>
+                        <div class="comp-body">
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">title</div>
+                                    <div class="prop-val">
+                                        Card header title. Can be a string or a
+                                        slot (for custom HTML like badges).
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">description</div>
+                                    <div class="prop-val">
+                                        Subtitle shown below title in the
+                                        header.
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">:padding</div>
+                                    <div class="prop-val">
+                                        true (default) = adds p-6 to body. false
+                                        = no padding (for flush tables).
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">#action (slot)</div>
+                                    <div class="prop-val">
+                                        Content shown in top-right of card
+                                        header (buttons, links).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">blade</span>
+                                </div>
+                                <pre><code>&lt;<span class="hl-attr">x-ui.card</span> <span class="hl-attr">title</span>=<span class="hl-str">"Recent Businesses"</span> <span class="hl-attr">description</span>=<span class="hl-str">"Latest registrations"</span>&gt;
+    &lt;<span class="hl-attr">x-slot:action</span>&gt;
+        &lt;<span class="hl-attr">x-ui.button</span> <span class="hl-attr">size</span>=<span class="hl-str">"sm"</span> <span class="hl-attr">variant</span>=<span class="hl-str">"outline"</span>&gt;View all&lt;/<span class="hl-attr">x-ui.button</span>&gt;
+    &lt;/<span class="hl-attr">x-slot:action</span>&gt;
+    <span class="hl-cmt">{{-- content here --}}</span>
+&lt;/<span class="hl-attr">x-ui.card</span>&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- badge -->
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">&lt;x-ui.badge&gt;</span
+                            ><span class="comp-file">ui/badge.blade.php</span>
+                        </div>
+                        <div class="comp-body">
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">color</div>
+                                    <div class="prop-val">
+                                        green | red | yellow | amber | blue |
+                                        gray | purple | orange
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">blade</span>
+                                </div>
+                                <pre><code>&lt;<span class="hl-attr">x-ui.badge</span> <span class="hl-attr">color</span>=<span class="hl-str">"green"</span>&gt;Active&lt;/<span class="hl-attr">x-ui.badge</span>&gt;
+&lt;<span class="hl-attr">x-ui.badge</span> :<span class="hl-attr">color</span>=<span class="hl-str">"$business->status_color"</span>&gt;{{ ucfirst($business->status) }}&lt;/<span class="hl-attr">x-ui.badge</span>&gt;
+<span class="hl-cmt">{{-- status_color is an accessor on the Business model --}}</span></code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- button -->
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">&lt;x-ui.button&gt;</span
+                            ><span class="comp-file">ui/button.blade.php</span>
+                        </div>
+                        <div class="comp-body">
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">variant</div>
+                                    <div class="prop-val">
+                                        primary (default) | secondary | danger |
+                                        outline | ghost | success
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">size</div>
+                                    <div class="prop-val">
+                                        xs | sm | md (default) | lg
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">type</div>
+                                    <div class="prop-val">
+                                        button (default) | submit | reset
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">href</div>
+                                    <div class="prop-val">
+                                        If provided, renders as &lt;a&gt; tag
+                                        instead of &lt;button&gt;
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">blade</span>
+                                </div>
+                                <pre><code><span class="hl-cmt">{{-- Submit button --}}</span>
+&lt;<span class="hl-attr">x-ui.button</span> <span class="hl-attr">type</span>=<span class="hl-str">"submit"</span>&gt;Save Settings&lt;/<span class="hl-attr">x-ui.button</span>&gt;
+
+<span class="hl-cmt">{{-- Link (renders as anchor) --}}</span>
+&lt;<span class="hl-attr">x-ui.button</span> <span class="hl-attr">href</span>=<span class="hl-str">"{{ route('super-admin.businesses.create') }}"</span> <span class="hl-attr">wire:navigate</span>&gt;
+    Add Business
+&lt;/<span class="hl-attr">x-ui.button</span>&gt;
+
+<span class="hl-cmt">{{-- With Livewire loading spinner --}}</span>
+&lt;<span class="hl-attr">x-ui.button</span> <span class="hl-attr">type</span>=<span class="hl-str">"submit"</span>&gt;
+    &lt;<span class="hl-attr">svg</span> <span class="hl-attr">wire:loading</span> <span class="hl-attr">class</span>=<span class="hl-str">"animate-spin w-4 h-4"</span>&gt;...&lt;/<span class="hl-attr">svg</span>&gt;
+    &lt;<span class="hl-attr">span</span> <span class="hl-attr">wire:loading.remove</span>&gt;Save&lt;/<span class="hl-attr">span</span>&gt;
+    &lt;<span class="hl-attr">span</span> <span class="hl-attr">wire:loading</span>&gt;Saving...&lt;/<span class="hl-attr">span</span>&gt;
+&lt;/<span class="hl-attr">x-ui.button</span>&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- input -->
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name">&lt;x-ui.input&gt;</span
+                            ><span class="comp-file">ui/input.blade.php</span>
+                        </div>
+                        <div class="comp-body">
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">label</div>
+                                    <div class="prop-val">
+                                        Label text shown above the input
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">:error</div>
+                                    <div class="prop-val">
+                                        Error message string. Shows red border +
+                                        icon + text. Pass
+                                        <code>$errors->first('fieldName')</code>
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">hint</div>
+                                    <div class="prop-val">
+                                        Gray helper text below (only shown when
+                                        no error)
+                                    </div>
+                                </div>
+                                <div class="prop-row">
+                                    <div class="prop-key">prefix</div>
+                                    <div class="prop-val">
+                                        Text/symbol inside left of input (e.g.
+                                        "$" or "@")
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">blade</span>
+                                </div>
+                                <pre><code>&lt;<span class="hl-attr">x-ui.input</span>
+    <span class="hl-attr">wire:model</span>=<span class="hl-str">"name"</span>
+    <span class="hl-attr">label</span>=<span class="hl-str">"Business Name *"</span>
+    <span class="hl-attr">placeholder</span>=<span class="hl-str">"The Daily Grind"</span>
+    :<span class="hl-attr">error</span>=<span class="hl-str">"$errors->first('name')"</span>
+/&gt;
+
+&lt;<span class="hl-attr">x-ui.input</span>
+    <span class="hl-attr">wire:model</span>=<span class="hl-str">"trialDays"</span>
+    <span class="hl-attr">type</span>=<span class="hl-str">"number"</span>
+    <span class="hl-attr">label</span>=<span class="hl-str">"Trial Days"</span>
+    <span class="hl-attr">hint</span>=<span class="hl-str">"Set to 0 to disable"</span>
+/&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- breadcrumb -->
+                    <div class="comp-card">
+                        <div class="comp-card-head">
+                            <span class="comp-name"
+                                >&lt;x-super-admin.breadcrumb&gt;</span
+                            ><span class="comp-file"
+                                >super-admin/breadcrumb.blade.php</span
+                            >
+                        </div>
+                        <div class="comp-body">
+                            <div class="prop-grid">
+                                <div class="prop-row">
+                                    <div class="prop-key">
+                                        :items<span class="prop-req">*</span>
+                                    </div>
+                                    <div class="prop-val">
+                                        Array of
+                                        <code
+                                            >['label' => string, 'url' =>
+                                            string]</code
+                                        >. Last item = current page (bold, no
+                                        link). Others are links.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span class="code-lang">blade</span>
+                                </div>
+                                <pre><code><span class="hl-cmt">{{-- Single level (current page) --}}</span>
+&lt;<span class="hl-attr">x-super-admin.breadcrumb</span> :<span class="hl-attr">items</span>=<span class="hl-str">"[['label' => 'Dashboard']]"</span>/&gt;
+
+<span class="hl-cmt">{{-- Nested (parent links + current page) --}}</span>
+&lt;<span class="hl-attr">x-super-admin.breadcrumb</span> :<span class="hl-attr">items</span>=<span class="hl-str">"[
+    ['label' => 'Businesses', 'url' => route('super-admin.businesses.index')],
+    ['label' => 'Add Business']
+]"</span>/&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- COMMON PATTERNS                    -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="patterns">
+                    <div class="section-header">
+                        <div class="section-number">9</div>
+                        <h2 class="section-title">Common Patterns</h2>
+                    </div>
+
+                    <h3>Flash Messages with Auto-Dismiss</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">blade</span
+                            ><span class="code-file"
+                                >Pattern used on all listing pages</span
+                            >
+                        </div>
+                        <pre><code><span class="hl-cmt">{{-- In Blade view: auto-removes after 4 seconds via Alpine --}}</span>
+@<span class="hl-fn">if</span>(<span class="hl-fn">session</span>(<span class="hl-str">'success'</span>))
+    &lt;<span class="hl-attr">div</span> <span class="hl-attr">x-data</span> <span class="hl-attr">x-init</span>=<span class="hl-str">"setTimeout(() => $el.remove(), 4000)"</span>
+         <span class="hl-attr">class</span>=<span class="hl-str">"p-4 bg-emerald-50 border border-emerald-200 rounded-xl"</span>&gt;
+        {{ <span class="hl-fn">session</span>(<span class="hl-str">'success'</span>) }}
+    &lt;/<span class="hl-attr">div</span>&gt;
+@<span class="hl-fn">endif</span>
+
+<span class="hl-cmt">// In PHP component:</span>
+<span class="hl-fn">session</span>()-><span class="hl-fn">flash</span>(<span class="hl-str">'success'</span>, <span class="hl-str">'Business created!'</span>);</code></pre>
+                    </div>
+
+                    <h3>Livewire Loading States</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">blade</span>
+                        </div>
+                        <pre><code>&lt;<span class="hl-attr">button</span> <span class="hl-attr">wire:click</span>=<span class="hl-str">"save"</span> <span class="hl-attr">wire:loading.attr</span>=<span class="hl-str">"disabled"</span>&gt;
+    &lt;<span class="hl-attr">svg</span> <span class="hl-attr">wire:loading</span> <span class="hl-attr">wire:target</span>=<span class="hl-str">"save"</span> <span class="hl-attr">class</span>=<span class="hl-str">"animate-spin w-4 h-4"</span>&gt;...&lt;/<span class="hl-attr">svg</span>&gt;
+    &lt;<span class="hl-attr">span</span> <span class="hl-attr">wire:loading.remove</span> <span class="hl-attr">wire:target</span>=<span class="hl-str">"save"</span>&gt;Save&lt;/<span class="hl-attr">span</span>&gt;
+    &lt;<span class="hl-attr">span</span> <span class="hl-attr">wire:loading</span> <span class="hl-attr">wire:target</span>=<span class="hl-str">"save"</span>&gt;Saving...&lt;/<span class="hl-attr">span</span>&gt;
+&lt;/<span class="hl-attr">button</span>&gt;
+<span class="hl-cmt">{{-- wire:target scopes loading to only the "save" action --}}</span></code></pre>
+                    </div>
+
+                    <h3>Soft Deletes — Recover Data</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">php</span>
+                        </div>
+                        <pre><code><span class="hl-cmt">// Standard delete (soft — sets deleted_at, stays in DB)</span>
+<span class="hl-cls">Business</span>::<span class="hl-fn">findOrFail</span>(<span class="hl-key">$id</span>)-><span class="hl-fn">delete</span>();
+
+<span class="hl-cmt">// Restore a soft-deleted record</span>
+<span class="hl-cls">Business</span>::<span class="hl-fn">withTrashed</span>()-><span class="hl-fn">find</span>(<span class="hl-key">$id</span>)-><span class="hl-fn">restore</span>();
+
+<span class="hl-cmt">// Permanently delete (cannot undo)</span>
+<span class="hl-cls">Business</span>::<span class="hl-fn">withTrashed</span>()-><span class="hl-fn">find</span>(<span class="hl-key">$id</span>)-><span class="hl-fn">forceDelete</span>();
+
+<span class="hl-cmt">// Query including soft-deleted records</span>
+<span class="hl-cls">Business</span>::<span class="hl-fn">withTrashed</span>()-><span class="hl-fn">get</span>();</code></pre>
+                    </div>
+
+                    <h3>PlatformSetting Read/Write</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-lang">php</span
+                            ><span class="code-file"
+                                >app/Models/PlatformSetting.php</span
+                            >
+                        </div>
+                        <pre><code><span class="hl-cmt">// Read (returns typed value, not always string)</span>
+<span class="hl-key">$name</span>          = <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">get</span>(<span class="hl-str">'platform_name'</span>, <span class="hl-str">'BrewFlow'</span>);  <span class="hl-cmt">// string</span>
+<span class="hl-key">$isEnabled</span>     = <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">get</span>(<span class="hl-str">'enable_registration'</span>, <span class="hl-key">true</span>); <span class="hl-cmt">// bool</span>
+<span class="hl-key">$trialDays</span>     = <span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">get</span>(<span class="hl-str">'trial_days'</span>, <span class="hl-num">14</span>);            <span class="hl-cmt">// int</span>
+
+<span class="hl-cmt">// Write (upsert — creates or updates)</span>
+<span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">set</span>(<span class="hl-str">'platform_name'</span>, <span class="hl-str">'My SaaS'</span>, <span class="hl-str">'general'</span>, <span class="hl-str">'string'</span>);
+<span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">set</span>(<span class="hl-str">'enable_registration'</span>, <span class="hl-str">'1'</span>, <span class="hl-str">'features'</span>, <span class="hl-str">'boolean'</span>);
+<span class="hl-cls">PlatformSetting</span>::<span class="hl-fn">set</span>(<span class="hl-str">'trial_days'</span>, <span class="hl-str">'14'</span>, <span class="hl-str">'billing'</span>, <span class="hl-str">'integer'</span>);</code></pre>
+                    </div>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- ══════════════════════════════════ -->
+                <!-- EXTENDING                          -->
+                <!-- ══════════════════════════════════ -->
+                <div class="section" id="extending">
+                    <div class="section-header">
+                        <div class="section-number">10</div>
+                        <h2 class="section-title">Adding a New Page</h2>
+                    </div>
+                    <p>
+                        Follow these 5 steps to add a new
+                        <strong>Reports</strong> page. The same pattern applies
+                        to any new section.
+                    </p>
+
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Create the Livewire component class
+                            </div>
+                            <div class="step-desc">
+                                <div class="code-block" style="margin-top: 8px">
+                                    <div class="code-header">
+                                        <span class="code-lang">shell</span>
+                                    </div>
+                                    <pre><code>php artisan make:livewire SuperAdmin/Reports/ReportsPage
+<span class="hl-cmt"># Creates: app/Livewire/SuperAdmin/Reports/ReportsPage.php</span>
+<span class="hl-cmt"># Creates: resources/views/livewire/super-admin/reports/reports-page.blade.php</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Edit the PHP class — add Layout + Title + your
+                                logic
+                            </div>
+                            <div class="step-desc">
+                                <div class="code-block" style="margin-top: 8px">
+                                    <div class="code-header">
+                                        <span class="code-lang">php</span
+                                        ><span class="code-file"
+                                            >app/Livewire/SuperAdmin/Reports/ReportsPage.php</span
+                                        >
+                                    </div>
+                                    <pre><code><span class="hl-attr">#[Layout</span>(<span class="hl-str">'components.layouts.super-admin'</span>)<span class="hl-attr">]</span>
+<span class="hl-attr">#[Title</span>(<span class="hl-str">'Reports'</span>)<span class="hl-attr">]</span>
+<span class="hl-key">class</span> <span class="hl-cls">ReportsPage</span> <span class="hl-key">extends</span> <span class="hl-cls">Component</span>
+{
+    <span class="hl-key">public function</span> <span class="hl-fn">render</span>()
+    {
+        <span class="hl-key">return</span> <span class="hl-fn">view</span>(<span class="hl-str">'livewire.super-admin.reports.reports-page'</span>);
+    }
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Edit the Blade view — use the design system
+                                components
+                            </div>
+                            <div class="step-desc">
+                                <div class="code-block" style="margin-top: 8px">
+                                    <div class="code-header">
+                                        <span class="code-lang">blade</span
+                                        ><span class="code-file"
+                                            >resources/views/livewire/super-admin/reports/reports-page.blade.php</span
+                                        >
+                                    </div>
+                                    <pre><code>&lt;<span class="hl-attr">div</span>&gt;
+    &lt;<span class="hl-attr">x-super-admin.breadcrumb</span> :<span class="hl-attr">items</span>=<span class="hl-str">"[['label' => 'Reports']]"</span>/&gt;
+
+    &lt;<span class="hl-attr">div</span> <span class="hl-attr">class</span>=<span class="hl-str">"mb-6"</span>&gt;
+        &lt;<span class="hl-attr">h2</span> <span class="hl-attr">class</span>=<span class="hl-str">"text-xl font-bold text-slate-800"</span>&gt;Reports&lt;/<span class="hl-attr">h2</span>&gt;
+    &lt;/<span class="hl-attr">div</span>&gt;
+
+    &lt;<span class="hl-attr">x-ui.card</span> <span class="hl-attr">title</span>=<span class="hl-str">"Sales Overview"</span>&gt;
+        <span class="hl-cmt">{{-- your content here --}}</span>
+    &lt;/<span class="hl-attr">x-ui.card</span>&gt;
+&lt;/<span class="hl-attr">div</span>&gt;</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">4</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Add the route inside the protected middleware
+                                group
+                            </div>
+                            <div class="step-desc">
+                                <div class="code-block" style="margin-top: 8px">
+                                    <div class="code-header">
+                                        <span class="code-lang">php</span
+                                        ><span class="code-file"
+                                            >routes/web.php — inside
+                                            middleware(['auth', 'super_admin'])
+                                            group</span
+                                        >
+                                    </div>
+                                    <pre><code><span class="hl-key">use</span> <span class="hl-cls">App\Livewire\SuperAdmin\Reports\ReportsPage</span>;
+
+<span class="hl-cls">Route</span>::<span class="hl-fn">get</span>(<span class="hl-str">'/reports'</span>, <span class="hl-cls">ReportsPage</span>::<span class="hl-key">class</span>)-><span class="hl-fn">name</span>(<span class="hl-str">'reports.index'</span>);</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">5</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Add the nav item to the sidebar
+                            </div>
+                            <div class="step-desc">
+                                <div class="code-block" style="margin-top: 8px">
+                                    <div class="code-header">
+                                        <span class="code-lang">blade</span
+                                        ><span class="code-file"
+                                            >resources/views/components/super-admin/sidebar.blade.php</span
+                                        >
+                                    </div>
+                                    <pre><code><span class="hl-cmt">{{-- Add under Configuration section or create a new section --}}</span>
+&lt;<span class="hl-attr">x-super-admin.nav-item</span>
+    <span class="hl-attr">route</span>=<span class="hl-str">"super-admin.reports.index"</span>
+    <span class="hl-attr">label</span>=<span class="hl-str">"Reports"</span>
+    <span class="hl-attr">icon</span>=<span class="hl-str">"chart-bar"</span>
+/&gt;</code></pre>
+                                </div>
+                                <p style="margin-top: 8px; font-size: 13px">
+                                    Available icons: <code>chart-bar</code>,
+                                    <code>building</code>, <code>users</code>,
+                                    <code>shield</code>, <code>cog</code>. Add
+                                    new icons in
+                                    <code>nav-item.blade.php</code>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="callout green">
+                        <svg
+                            class="callout-icon"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+                        <div>
+                            <div class="callout-title">That's all 5 steps!</div>
+                            <p>
+                                The new page is automatically protected by the
+                                same <code>auth + super_admin</code> middleware.
+                                The sidebar highlights it as active based on the
+                                route name. The layout, breadcrumb, and all UI
+                                components are ready to use.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h3>Adding a New UI Component</h3>
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Create
+                                <code
+                                    >resources/views/components/ui/my-component.blade.php</code
+                                >
+                            </div>
+                            <div class="step-desc">
+                                <div class="code-block" style="margin-top: 8px">
+                                    <div class="code-header">
+                                        <span class="code-lang">blade</span>
+                                    </div>
+                                    <pre><code>@<span class="hl-fn">props</span>([<span class="hl-str">'color'</span> => <span class="hl-str">'blue'</span>, <span class="hl-str">'label'</span> => <span class="hl-str">''</span>])
+
+&lt;<span class="hl-attr">div</span> {{ <span class="hl-key">$attributes</span>-><span class="hl-fn">merge</span>([<span class="hl-str">'class'</span> => <span class="hl-str">'...'</span>]) }}&gt;
+    {{ <span class="hl-key">$slot</span> }}
+&lt;/<span class="hl-attr">div</span>&gt;</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-body">
+                            <div class="step-title">
+                                Use it anywhere with
+                                <code>&lt;x-ui.my-component&gt;</code>
+                            </div>
+                            <div class="step-desc">
+                                Laravel auto-discovers Blade components — no
+                                registration needed.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="
+                            margin-top: 48px;
+                            padding: 24px;
+                            background: var(--card-bg);
+                            border: 1px solid var(--border);
+                            border-radius: 12px;
+                            text-align: center;
+                        "
+                    >
+                        <p
+                            style="
+                                font-size: 15px;
+                                font-weight: 600;
+                                color: var(--text);
+                                margin-bottom: 8px;
+                            "
+                        >
+                            Back to Part 1
+                        </p>
+                        <p style="margin-bottom: 16px">
+                            Architecture, authentication flow, database schema,
+                            roles & permissions
+                        </p>
+                        <a
+                            href="index.html"
+                            style="
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 8px;
+                                background: var(--accent);
+                                color: #fff;
+                                text-decoration: none;
+                                padding: 10px 22px;
+                                border-radius: 8px;
+                                font-weight: 700;
+                                font-size: 14px;
+                            "
+                        >
+                            ← Architecture & Auth
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const links = document.querySelectorAll('.nav-link[href^="#"]');
+            const sections = [...links]
+                .map((l) => document.querySelector(l.getAttribute("href")))
+                .filter(Boolean);
+            const obs = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            links.forEach((l) => l.classList.remove("active"));
+                            const a = document.querySelector(
+                                `.nav-link[href="#${entry.target.id}"]`,
+                            );
+                            if (a) a.classList.add("active");
+                        }
+                    });
+                },
+                { rootMargin: "-20% 0px -70% 0px" },
+            );
+            sections.forEach((s) => obs.observe(s));
+            document
+                .getElementById("mobileToggle")
+                .addEventListener("click", () => {
+                    document.getElementById("sidebar").classList.toggle("open");
+                });
+        </script>
+    </body>
+</html>

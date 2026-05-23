@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Management | BrewFlow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@500;600;700;800&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f3f2;
+        }
+        .headline-font {
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .label-font {
+            font-family: 'Geist', sans-serif;
+        }
+        /* Custom scrollbar for clean UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e2e1;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1b",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f4f0ef",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ddd9d8",
+                        "primary": "#000000",
+                        "secondary-fixed": "#e2e3e1",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-container-highest": "#e5e2e1",
+                        "tertiary-fixed": "#e3e3dc",
+                        "on-primary-fixed": "#1c1b1b",
+                        "surface-container": "#f1edec",
+                        "on-tertiary-fixed": "#1a1c18",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "secondary": "#5d5f5d",
+                        "tertiary": "#000000",
+                        "surface": "#fdf8f8",
+                        "on-tertiary-fixed-variant": "#464742",
+                        "background": "#fdf8f8",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#c8c6c5",
+                        "surface-container-high": "#ebe7e6",
+                        "on-tertiary-container": "#83847e",
+                        "on-error": "#ffffff",
+                        "primary-container": "#1c1b1b",
+                        "outline": "#747878",
+                        "inverse-surface": "#313030",
+                        "on-secondary-fixed-variant": "#454746",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#5f5e5e",
+                        "secondary-container": "#e2e3e1",
+                        "secondary-fixed-dim": "#c6c7c5",
+                        "surface-variant": "#e5e2e1",
+                        "on-primary-container": "#858383",
+                        "on-background": "#1c1b1b",
+                        "outline-variant": "#c4c7c7",
+                        "surface-container-low": "#f7f3f2",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-secondary-container": "#636563",
+                        "tertiary-container": "#1a1c18",
+                        "tertiary-fixed-dim": "#c7c7c0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "32px",
+                        "section-gap": "48px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "card-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-sm": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface-container-low text-on-surface">
+<!-- SideNavBar Anchor -->
+<aside class="w-[240px] h-screen fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col p-4 z-50">
+<div class="mb-8 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">BrewFlow</h1>
+<p class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Super Admin</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">storefront</span> Cafes
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">hotel</span> Hotels
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">payments</span> Plans
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">manage_accounts</span> Roles
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-primary font-bold bg-secondary-container rounded-lg font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">group</span> Staff
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">analytics</span> Analytics
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary hover:bg-surface-container-high rounded-lg transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<button class="w-full flex items-center justify-center gap-2 py-2 mb-4 bg-primary text-on-primary rounded-lg font-body-md text-body-md font-semibold">
+<span class="material-symbols-outlined text-[18px]">contact_support</span> Support
+            </button>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">description</span> Docs
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-secondary hover:text-primary transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">help</span> Help
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[240px] min-h-screen">
+<!-- TopNavBar Anchor -->
+<header class="sticky top-0 w-full z-40 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm h-16 flex items-center justify-between px-gutter">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary rounded-lg bg-surface-container border border-outline-variant">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 pl-10 py-1.5 font-body-md text-body-md" placeholder="Search staff or roles..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<button class="p-2 text-secondary hover:bg-surface-container rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<button class="px-4 py-1.5 text-primary border border-primary rounded-lg font-body-md text-body-md hover:bg-primary hover:text-on-primary transition-all">
+                    Feedback
+                </button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right hidden sm:block">
+<p class="font-body-md text-body-md font-semibold leading-tight">Admin User</p>
+<p class="font-label-sm text-label-sm text-secondary">Global Admin</p>
+</div>
+<img alt="Administrator Profile" class="w-10 h-10 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQJ4SkXSbnZIQVVJ3Qv4lvMtpjnA4ezvn9sSdXSAdh0IcWuNlcFbZDUo5NythsJHbZk6DP2_wyxvbtv4NC7cxG9KNe10xjOS8QUNk3C_i90pksTJX6NbcIM98NKLp-XswSgYpB0ifa-Tl8tLfiSJjUtzBICsSPtATW-AEWOJ7bl5_Ume3MgPuHYXaphnA2bY_XJTrKT852UnMwTFv2T-7f61J2bDrLRlrGZ4sDe0CLA57_eGx1dgLVAWekNXgNOz3_oDh5W5Dt2pvH"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-gutter max-w-7xl mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-section-gap">
+<div>
+<nav class="flex gap-2 text-secondary font-label-sm text-label-sm mb-2">
+<span>Organization</span>
+<span>/</span>
+<span class="text-primary font-semibold">Staff Management</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-primary">Staff Directory</h2>
+<p class="text-secondary font-body-lg text-body-lg mt-1 max-w-2xl">Oversee your global operations team, manage permissions, and invite new members to the BrewFlow ecosystem.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2.5 border border-outline text-on-surface hover:bg-surface-container rounded-lg transition-all font-body-md text-body-md font-semibold">
+<span class="material-symbols-outlined">download</span> Export List
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary hover:bg-neutral-800 rounded-lg transition-all font-body-md text-body-md font-semibold shadow-sm">
+<span class="material-symbols-outlined">person_add</span> Invite Staff
+                    </button>
+</div>
+</div>
+<!-- Dashboard Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-gutter">
+<div class="bg-surface-container-lowest p-card-padding rounded-[24px] border border-outline-variant flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-4">group</span>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Total Staff</p>
+<p class="font-headline-lg text-headline-lg mt-1">128</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-[24px] border border-outline-variant flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-4" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Active Now</p>
+<p class="font-headline-lg text-headline-lg mt-1">42</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-[24px] border border-outline-variant flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-4">pending_actions</span>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Pending Invites</p>
+<p class="font-headline-lg text-headline-lg mt-1">7</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-card-padding rounded-[24px] border border-outline-variant flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-4">star</span>
+<div>
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Global Admins</p>
+<p class="font-headline-lg text-headline-lg mt-1">3</p>
+</div>
+</div>
+</div>
+<!-- Staff Table Container -->
+<div class="bg-surface-container-lowest rounded-[24px] border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest/50">
+<div class="flex items-center gap-4">
+<h3 class="font-headline-md text-headline-md">Employee Directory</h3>
+<div class="flex items-center gap-1.5 px-3 py-1 bg-secondary-container rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-on-secondary-container"></span>
+<span class="font-label-sm text-label-sm text-on-secondary-container">128 Total</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<select class="font-body-md text-body-md border-outline-variant rounded-lg bg-surface px-4 py-2 focus:ring-primary focus:border-primary">
+<option>All Roles</option>
+<option>Barista</option>
+<option>Manager</option>
+<option>Operations</option>
+</select>
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant bg-surface-container-low/30">
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Employee</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Role</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Permissions</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider">Joined Date</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary uppercase tracking-wider"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Staff Member 1 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Julianne Smith" class="w-10 h-10 rounded-full border border-outline-variant" data-alt="A professional headshot of a friendly young woman with short hair, wearing a high-end minimalist black barista uniform in a bright modern cafe setting. The lighting is soft and flattering, emphasizing a clean corporate luxury aesthetic with warm beige backgrounds and crisp black details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwWYe6SnlHzpDS7HMNljgfmIIWoCtryr1IDwFneArShaVMJqRkoTueK5t5eIyTHsldOqRyycSI1b6vDmD7VAUOsMGn5W8JPTBZoQSgBw5t1XeoquNRniPAfBIZmEOTKFy_4vgzUcon3wHlga9aGYlTlNy7JRhMKx7IyHUecmYYea7LIa688V-dHXzj8tmBbscFtyVIi-csEZaYWTu_F4PV5COF5wdPw0mTPtCjZ_T60skXsWTzFxOYc_DWfjX5BTQXBQFygTb1E32y"/>
+<div>
+<p class="font-body-md text-body-md font-bold text-primary">Julianne Smith</p>
+<p class="font-label-sm text-label-sm text-secondary">julianne@brewflow.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container rounded-lg font-body-md text-body-md text-primary font-medium">Store Manager</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="font-body-md text-body-md text-primary">Active</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="group/tooltip relative flex items-center gap-1.5 cursor-help">
+<span class="material-symbols-outlined text-secondary text-[18px]">security</span>
+<span class="font-body-md text-body-md text-secondary">Level 2 Access</span>
+<div class="absolute bottom-full left-0 mb-2 w-48 p-3 bg-inverse-surface text-inverse-on-surface text-label-sm rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
+                                                Includes inventory management, staff scheduling, and daily reporting.
+                                            </div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Oct 12, 2023</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-surface-container-highest">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Staff Member 2 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Marcus Aurelius" class="w-10 h-10 rounded-full border border-outline-variant" data-alt="A close-up portrait of a mature professional man with a neatly trimmed beard, wearing a high-quality dark linen shirt. The backdrop is a blurred minimalist office with warm wooden textures and soft ambient light. The image captures a sense of sophisticated utility and leadership, consistent with a premium SaaS interface style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUBp0wJINaaQbyZe8ZxXtquAT32QWRbum0HtW8FLr7ZkttBYf5NOK2-wcm-O6s6pgzvMpHABVtFed3GMOOOdwyGFgXWd6xZlfujh0NlbAwtSF4K3oj4lTjdgDPdIhyT0-s0WcVF_YoEg4qbf8EBO3llnT4N-9FNkem94baNmjpgr06FGROMmeRBauuH5C5foP2Q7wdrP_hHNJrw_Cb0E7UfaKM8FgESSL1MIYK49LU1MqtftiCrUnZrlDxLFz3SKpYKd_v1hxRDics"/>
+<div>
+<p class="font-body-md text-body-md font-bold text-primary">Marcus Aurelius</p>
+<p class="font-label-sm text-label-sm text-secondary">m.aurelius@brewflow.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container rounded-lg font-body-md text-body-md text-primary font-medium">Head Barista</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="font-body-md text-body-md text-primary">Active</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+<span class="font-body-md text-body-md text-secondary">Operational</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Jan 05, 2024</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-surface-container-highest">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Staff Member 3 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<img alt="Lydia Chen" class="w-10 h-10 rounded-full border border-outline-variant" data-alt="A portrait of an Asian woman in her late 20s with a modern professional appearance, wearing a white silk blouse against a light grey architectural background. Her expression is calm and confident. The scene is bright and airy with a luxury concierge aesthetic, utilizing high-key lighting and a muted, elegant color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLyxL-5mPJ8yp7Z_5rnixUWQQZvQBSq2Kun479CIAvaKDJEkjHQi0nirIGrmoxerI-7JiPHku9hvvtQjKtmXqFw0d0QOYCRoSKVYIFmk_xTBgIHMNWQ9Y3Vd44nKd4cO9RkjdMEBhQ8esCG-NxZyyR0MhX2HCzHSSeafZeYk-1gSQJ4peY1_djznNIScc2IA3--zIxhTC8xZAUg2jnJfmct89A8mvlZs0A-a4DHOBdipa8GN-bntGtbmFkVz5pMAWTfKc92lsTsASO"/>
+<div>
+<p class="font-body-md text-body-md font-bold text-primary">Lydia Chen</p>
+<p class="font-label-sm text-label-sm text-secondary">lchen@brewflow.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container rounded-lg font-body-md text-body-md text-primary font-medium">Regional Lead</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-amber-400"></span>
+<span class="font-body-md text-body-md text-primary">On Break</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">stars</span>
+<span class="font-body-md text-body-md text-secondary">Full Access</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">Nov 20, 2022</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-surface-container-highest">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Staff Member 4 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border border-dashed border-outline-variant flex items-center justify-center bg-surface-container-low">
+<span class="material-symbols-outlined text-secondary">person</span>
+</div>
+<div>
+<p class="font-body-md text-body-md font-bold text-primary">Pending Invite</p>
+<p class="font-label-sm text-label-sm text-secondary">h.thompson@gmail.com</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-container rounded-lg font-body-md text-body-md text-primary font-medium">Operations</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="font-body-md text-body-md text-secondary italic">Pending</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline-variant text-[18px]">lock</span>
+<span class="font-body-md text-body-md text-outline-variant">Restricted</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-md text-body-md text-secondary">--</td>
+<td class="px-6 py-4 text-right">
+<button class="text-error font-label-sm text-label-sm font-semibold hover:underline">Resend</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-6 border-t border-outline-variant flex items-center justify-between">
+<p class="font-body-md text-body-md text-secondary">Showing 1-10 of 128 results</p>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant rounded-lg font-body-md text-body-md text-primary disabled:opacity-50" disabled="">
+                            Previous
+                        </button>
+<button class="px-3 py-1.5 bg-primary text-on-primary rounded-lg font-body-md text-body-md font-semibold">
+                            Next
+                        </button>
+</div>
+</div>
+</div>
+<!-- Invite Staff Modal (Asymmetric UI Highlight) -->
+<div class="mt-section-gap grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Invite Card -->
+<div class="lg:col-span-2 bg-surface p-card-padding rounded-[24px] border border-outline-variant shadow-sm">
+<div class="mb-6">
+<h3 class="font-headline-md text-headline-md">Invite New Team Member</h3>
+<p class="text-secondary font-body-md text-body-md">Fill in the details to send an automated onboarding email.</p>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface ml-1">Full Name</label>
+<input class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md text-body-md bg-white" placeholder="e.g. David Sterling" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface ml-1">Work Email</label>
+<input class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md text-body-md bg-white" placeholder="name@brewflow.com" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface ml-1">Primary Role</label>
+<select class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md text-body-md bg-white">
+<option>Select a role...</option>
+<option>Barista</option>
+<option>Floor Staff</option>
+<option>Kitchen Lead</option>
+<option>Manager</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm text-label-sm text-on-surface ml-1">Department</label>
+<select class="w-full px-4 py-3 border border-outline-variant rounded-lg focus:ring-primary focus:border-primary font-body-md text-body-md bg-white">
+<option>Select department...</option>
+<option>Operations</option>
+<option>Marketing</option>
+<option>Logistics</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2 p-4 bg-surface-container rounded-xl">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" id="send-welcome" type="checkbox"/>
+<label class="font-body-md text-body-md text-primary font-medium" for="send-welcome">Send personalized welcome kit to this employee</label>
+</div>
+<div class="flex justify-end gap-3 pt-4">
+<button class="px-6 py-2.5 font-body-md text-body-md font-semibold text-primary hover:bg-surface-container rounded-lg transition-colors" type="button">Discard</button>
+<button class="px-10 py-2.5 font-body-md text-body-md font-semibold bg-primary text-on-primary rounded-lg shadow-lg hover:bg-neutral-800 transition-all" type="submit">Send Invitation</button>
+</div>
+</form>
+</div>
+<!-- Role Summary Info -->
+<div class="lg:col-span-1 space-y-6">
+<div class="bg-primary text-on-primary p-card-padding rounded-[24px] shadow-xl relative overflow-hidden h-full">
+<div class="relative z-10">
+<h4 class="font-headline-md text-headline-md mb-2">Role Management Tips</h4>
+<p class="text-on-primary-container font-body-md text-body-md mb-8">Efficient staff management starts with clear role definitions and scoped permissions.</p>
+<ul class="space-y-6">
+<li class="flex gap-4">
+<span class="material-symbols-outlined flex-shrink-0 text-primary-fixed-dim">verified</span>
+<div>
+<p class="font-body-md text-body-md font-bold">Scoped Access</p>
+<p class="font-label-sm text-label-sm text-on-primary-container opacity-80">Only grant access to locations where the employee is scheduled.</p>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined flex-shrink-0 text-primary-fixed-dim">history</span>
+<div>
+<p class="font-body-md text-body-md font-bold">Activity Logs</p>
+<p class="font-label-sm text-label-sm text-on-primary-container opacity-80">All staff actions are logged for security and accountability.</p>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined flex-shrink-0 text-primary-fixed-dim">key</span>
+<div>
+<p class="font-body-md text-body-md font-bold">2FA Mandate</p>
+<p class="font-label-sm text-label-sm text-on-primary-container opacity-80">Require multi-factor authentication for all management roles.</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Background Accent Shape -->
+<div class="absolute -right-16 -bottom-16 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Spacer -->
+<footer class="h-16"></footer>
+</main>
+</body></html>
