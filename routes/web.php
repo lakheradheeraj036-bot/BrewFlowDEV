@@ -36,6 +36,8 @@ Route::prefix("super-admin")
         Route::middleware(["auth", "super_admin"])->group(function () {
             Route::get("/dashboard", DashboardPage::class)->name("dashboard");
 
+
+            // Business Management
             Route::get('/businesses', [BusinessController::class, 'index'])->name('businesses.index');
             Route::get('/businesses/create', [BusinessController::class, 'create'])->name('businesses.create');
             Route::post('/businesses', [BusinessController::class, 'store'])->name('businesses.store');
@@ -43,13 +45,16 @@ Route::prefix("super-admin")
             Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
             Route::post('/businesses/bulk-status', [BusinessController::class, 'bulkUpdateStatus'])->name('businesses.bulk-status');
             Route::delete('/businesses/delete', [BusinessController::class, 'destroy'])->name('businesses.destroy');
+
+
+            // Staff Management
             Route::get("/staff", StaffManagement::class)->name("staff.index");
 
             // Roles
             Route::get("/roles", [RolesPermissionsController::class, 'index'])->name("roles.index");
             Route::post("/roles/toggle-permission", [RolesPermissionsController::class, 'togglePermission'])->name("roles.toggle-permission");
 
-            
+            // Settings
             Route::get('/settings',          [SettingsController::class, 'index'])->name('settings.index');
             Route::post('/settings/general',  [SettingsController::class, 'saveGeneral'])->name('settings.general');
             Route::post('/settings/features', [SettingsController::class, 'saveFeatures'])->name('settings.features');

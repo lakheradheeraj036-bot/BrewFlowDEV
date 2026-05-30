@@ -25,9 +25,11 @@ class Business extends Model
         'timezone',
         'currency',
         'logo',
+        'description',
         'settings',
         'subscription_expires_at',
         'subscription_plan',
+        'subscription_plan_id',
         'owner_id',
     ];
 
@@ -61,6 +63,11 @@ class Business extends Model
     public function staff(): HasMany
     {
         return $this->hasMany(User::class, 'business_id');
+    }
+
+    public function subscriptionPlan(): BelongsTo
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'subscription_plan_id');
     }
 
     // -------------------------------------------------------------------------

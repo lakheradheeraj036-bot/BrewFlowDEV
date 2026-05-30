@@ -12,10 +12,12 @@
     <form
         method="POST"
         action="{{ route('super-admin.businesses.store') }}"
+        enctype="multipart/form-data"
         x-data="{
             name: '{{ old('name') }}',
             email: '{{ old('email') }}',
             phone: '{{ old('phone') }}',
+            logoPreview: null,
             submitting: false,
             errors: {},
             validate(field) {
@@ -27,10 +29,20 @@
                 if (field === 'phone' && this.phone && this.phone.length > 20)
                     this.errors.phone = 'Phone number may not exceed 20 characters.'
             },
+            handleLogoUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.logoPreview = URL.createObjectURL(file);
+                }
+            },
+            removeLogo() {
+                this.logoPreview = null;
+                this.$refs.logoInput.value = '';
+            },
             submit(e) {
                 this.errors = {}
                 if (this.name.trim().length < 2) this.errors.name = 'Business name must be at least 2 characters.'
-                if (this.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) this.errors.email = 'Please enter a valid email address.'
+                if (!this.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) this.errors.email = 'Business email is required.'
                 if (this.phone && this.phone.length > 20) this.errors.phone = 'Phone number may not exceed 20 characters.'
                 if (Object.keys(this.errors).length) { e.preventDefault(); return }
                 this.submitting = true
@@ -45,6 +57,57 @@
 
             {{-- Left: Form Cards --}}
             <div class="lg:col-span-2 space-y-6">
+
+                {{-- Logo Upload --}}
+                <x-ui.card title="Business Logo">
+                    <div class="space-y-4">
+                        <div
+                            class="relative border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer hover:border-amber-400 hover:bg-amber-50"
+                            :class="logoPreview ? 'border-amber-400 bg-amber-50' : 'border-slate-300'"
+                            @click="$refs.logoInput.click()"
+                            @dragover.prevent="$el.classList.add('border-amber-400', 'bg-amber-50')"
+                            @dragleave.prevent="$el.classList.remove('border-amber-400', 'bg-amber-50')"
+                            @drop.prevent="handleLogoUpload({target: {files: $event.dataTransfer.files}})"
+                        >
+                            <input
+                                type="file"
+                                name="logo"
+                                x-ref="logoInput"
+                                accept="image/jpeg,image/png,image/jpg,image/svg,image/webp"
+                                class="hidden"
+                                @change="handleLogoUpload($event)"
+                            >
+                            <template x-if="logoPreview">
+                                <div class="space-y-3">
+                                    <img :src="logoPreview" alt="Logo preview" class="w-24 h-24 object-contain mx-auto rounded-lg">
+                                    <button
+                                        type="button"
+                                        @click.stop="removeLogo()"
+                                        class="text-sm text-red-600 hover:text-red-700 font-medium"
+                                    >
+                                        Remove Logo
+                                    </button>
+                                </div>
+                            </template>
+                            <template x-if="!logoPreview">
+                                <div class="space-y-3">
+                                    <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto">
+                                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-slate-700">Upload business logo</p>
+                                        <p class="text-xs text-slate-400 mt-1">PNG, JPG, SVG or WEBP (max 2MB)</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        @error('logo')
+                            <p class="text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </x-ui.card>
 
                 {{-- Business Information --}}
                 <x-ui.card title="Business Information">
@@ -102,6 +165,20 @@
                                 <p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Description</label>
+                            <textarea
+                                name="description"
+                                rows="3"
+                                placeholder="Describe the business..."
+                                maxlength="2000"
+                                class="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:border-amber-400 focus:ring-amber-200 transition-all resize-none"
+                            >{{ old('description') }}</textarea>
+                            @error('description')
+                                <p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </x-ui.card>
 
@@ -110,7 +187,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Business Email *</label>
                             <input
                                 type="email"
                                 name="email"
@@ -135,7 +212,7 @@
                                 name="phone"
                                 x-model="phone"
                                 @blur="validate('phone')"
-                                placeholder="+61 4XX XXX XXX"
+                                placeholder="+91 XXXXX XXXXX"
                                 maxlength="20"
                                 value="{{ old('phone') }}"
                                 class="w-full px-3 py-2.5 text-sm border rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:border-amber-400 focus:ring-amber-200 transition-all"
@@ -160,7 +237,7 @@
                         <x-ui.input
                             name="city"
                             label="City"
-                            placeholder="Sydney"
+                            placeholder="Mumbai"
                             :value="old('city')"
                             :error="$errors->first('city')"
                         />
@@ -168,41 +245,30 @@
                         <x-ui.input
                             name="country"
                             label="Country"
-                            placeholder="Australia"
-                            :value="old('country', 'Australia')"
+                            placeholder="India"
+                            :value="old('country', 'India')"
                             :error="$errors->first('country')"
                         />
                     </div>
                 </x-ui.card>
 
                 {{-- Subscription Plan --}}
-                <x-ui.card title="Subscription">
+                <x-ui.card title="Subscription Plan">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-3">Subscription Plan</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            @foreach([
-                                'free'         => ['label' => 'Free',         'desc' => 'Basic features'],
-                                'starter'      => ['label' => 'Starter',      'desc' => '$29/mo'],
-                                'professional' => ['label' => 'Professional', 'desc' => '$79/mo'],
-                                'enterprise'   => ['label' => 'Enterprise',   'desc' => 'Custom'],
-                            ] as $plan => $info)
-                                <label class="relative cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="subscription_plan"
-                                        value="{{ $plan }}"
-                                        class="peer sr-only"
-                                        {{ old('subscription_plan', 'free') === $plan ? 'checked' : '' }}
-                                    >
-                                    <div class="p-3 rounded-xl border-2 transition-all peer-checked:border-amber-500 peer-checked:bg-amber-50 border-slate-200 hover:border-slate-300">
-                                        <p class="text-sm font-semibold text-slate-800">{{ $info['label'] }}</p>
-                                        <p class="text-xs text-slate-400">{{ $info['desc'] }}</p>
-                                    </div>
-                                </label>
+                        <label class="block text-sm font-medium text-slate-700 mb-3">Select Subscription Plan</label>
+                        <select
+                            name="subscription_plan_id"
+                            class="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-800 focus:outline-none focus:ring-2 focus:border-amber-400 focus:ring-amber-200 transition-all"
+                        >
+                            <option value="">Select a plan</option>
+                            @foreach($subscriptionPlans as $plan)
+                                <option value="{{ $plan->id }}" {{ old('subscription_plan_id') == $plan->id ? 'selected' : '' }}>
+                                    {{ $plan->name }} - {{ $plan->formatted_price }}/{{ $plan->interval }}
+                                </option>
                             @endforeach
-                        </div>
-                        @error('subscription_plan')
-                            <p class="text-xs text-red-500 mt-2">{{ $message }}</p>
+                        </select>
+                        @error('subscription_plan_id')
+                            <p class="text-xs text-red-500 mt-1.5">{{ $message }}</p>
                         @enderror
                     </div>
                 </x-ui.card>
@@ -217,15 +283,19 @@
                     <ul class="space-y-3 text-sm text-slate-600">
                         <li class="flex items-start gap-2">
                             <span class="mt-0.5 w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
-                            <span>Enter the business name, type, and initial status.</span>
+                            <span>Upload a business logo (optional).</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="mt-0.5 w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
-                            <span>Provide contact details so the owner can be reached.</span>
+                            <span>Enter business name, type, and description.</span>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="mt-0.5 w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
-                            <span>Choose a subscription plan. You can upgrade it later.</span>
+                            <span>Provide business email (required) and contact details.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="mt-0.5 w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">4</span>
+                            <span>Select a subscription plan from available options.</span>
                         </li>
                     </ul>
                 </x-ui.card>
